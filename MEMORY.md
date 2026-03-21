@@ -55,31 +55,42 @@
 - `cheerio` — HTML parsing
 - `lodash` — utility functions
 
-### Инструменты
+### Инструменты v2.1
 | Инструмент | Назначение |
 |------------|------------|
-| `tools/runtime/fetch.mjs` | HTTP-клиент (GET/POST, headers, JSON) |
+| `tools/runtime/fetch.mjs` | HTTP-клиент (GET/POST, headers, JSON, file output) |
 | `tools/runtime/scrape.mjs` | Web scraping через CSS-селекторы |
-| `tools/runtime/analyze.mjs` | Анализ кода (tree, deps, find, exports) |
+| `tools/runtime/analyze.mjs` | Анализ кода (tree, deps, find, exports, stats) |
 | `tools/runtime/diff.mjs` | Сравнение файлов и строк |
+| `tools/runtime/pipe.mjs` | Data pipeline — jq-like transformations ⭐ |
 | `tools/runtime/repl.mjs` | Интерактивный REPL с workspace-доступом |
 | `tools/runtime/snail.js` | Лаунчер всех инструментов |
 
-### Использование
+### pipe.mjs — Data Pipeline
 ```bash
-./snail help                    # показать все инструменты
-./snail fetch <url> -j         # GET с JSON-ответом
-./snail scrape <url> h1        # вытащить все h1
-./snail analyze tree            # дерево проекта
-./snail analyze find "func"    # найти использования
-./snail diff file1 file2       # сравнить файлы
-./snail repl                   # интерактивный REPL
+# Источники
+@json:'{"key":"value"}'    # inline JSON
+@text:'hello'              # inline text
+file.json                  # файл
+
+# Трансформы
+.key                       # доступ к свойству
+.[0]                       # индекс массива
+.[1:3]                     # срез
+.sort .unique .reverse     # цепочка
+.sum .avg .min .max        # агрегация
+.trim .upper .split        # строки
+
+# Вывод
+--pretty                   # JSON (по умолчанию)
+--table                    # таблица
+--line                     # каждая строка отдельно
 ```
 
 ### Важно
 - Все Node.js-скрипты используют ES modules (.mjs)
 - Node 24 имеет встроенный fetch
-- tools/runtime/node_modules/ — локальные пакеты
+- shell-команды с аргументами в кавычках: `'.[0]'` not `.[0]`
 
 ## Ребрендинг (2026-03-21)
 
