@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Large binary files
+# (keep scripts and source code, but not builds)
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OpenClaw internal (not part of workspace backup)
+.openclaw/
+.clawhub/
+
+# Secrets (should never be committed)
+.env
+*.env
+secrets/
+credentials/
