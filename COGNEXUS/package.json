@@ -1,0 +1,28 @@
+{
+  "id": "cognexus",
+  "name": "CogneXus",
+  "version": "0.1.0",
+  "description": "Advanced cognitive architecture: memory hierarchy, parallel thinking, self-evolution, and task flow execution",
+  "author": "Stoic Snail 🐌",
+  "license": "MIT",
+  "openclaw": {
+    "extensions": [
+      "./src/engine.ts",
+      "./src/deliberate.ts",
+      "./src/evolution.ts",
+      "./src/flow.ts",
+      "./src/analytics.ts"
+    ],
+    "setupEntry": "./src/setup.ts"
+  },
+  "keywords": [
+    "cognitive",
+    "memory",
+    "reasoning",
+    "evolution",
+    "workflow"
+  ],
+  "engines": {
+    "openclaw": ">=2026.3.0"
+  }
+}
