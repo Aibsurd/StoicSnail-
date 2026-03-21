@@ -32,6 +32,8 @@
 | `CAPABILITIES.md` | Что умею | При сомнениях |
 | `EFFICIENCY.md` | Оптимизация | При оптимизации |
 | `RELATIONSHIP.md` | Отношения с Operator | При коммуникации |
+| `SESSION.md` | Управление контекстом | При проблемах с контекстом |
+| `ORCHESTRATION.md` | Sub-agents и параллели | При оркестрации |
 | `TOOLS.md` | Конфигурация | При настройке |
 
 ---
@@ -52,8 +54,8 @@
 
 ### Исследования
 - Использовать `scripts/deep_research.sh`
-- Результаты → в `research/`
-- Старые → в `archive/research/`
+- Результаты → в `archive/research/`
+- Старые → уже в `archive/research/`
 
 ---
 

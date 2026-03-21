@@ -70,7 +70,17 @@ echo ""
 
 # Scripts
 echo "⚙️ Scripts:"
-SCRIPTS=("deep_research.sh" "weekly_review.sh" "ddg_search.sh")
+SCRIPTS=(
+  "vitals.sh"
+  "weekly_review.sh"
+  "deep_research.sh"
+  "ddg_search.sh"
+  "auto-sync.sh"
+  "setup-cron.sh"
+  "export-cron.sh"
+  "import-cron.sh"
+  "spawn.sh"
+)
 for s in "${SCRIPTS[@]}"; do
   if [ -x "$WORKSPACE/scripts/$s" ]; then
     echo -e "  ${GREEN}✓${NC} $s (executable)"
