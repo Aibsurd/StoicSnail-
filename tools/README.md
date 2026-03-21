@@ -1,6 +1,6 @@
 # Stoic Snail Tools 🐌
 
-PhD-level engineering environment для автономной работы.
+PhD-level engineering environment для автономной работы. v2.0
 
 ## Быстрый старт
 
@@ -10,33 +10,81 @@ PhD-level engineering environment для автономной работы.
 
 ## Инструменты
 
-### HTTP Client — `fetch.mjs`
+### HTTP Client — `fetch.mjs` v2
 ```bash
-./snail fetch https://api.github.com -j
-./snail fetch https://httpbin.org/post -X POST -d '{"key":"value"}' -H "Content-Type: application/json"
+# GET с JSON
+./snail fetch https://httpbin.org/json -j
+
+# POST с данными
+./snail fetch https://httpbin.org/post -X POST -d '{"key":"value"}' -j
+
+# Сохранить в файл
+./snail fetch https://httpbin.org/image -o image.png
+
+# С заголовками
+./snail fetch https://api.github.com/users -H "Authorization: Bearer token"
+
+# Timeout и silent mode
+./snail fetch https://slow.example.com -t 10 -s
 ```
 
-### Web Scraper — `scrape.mjs`
+### Web Scraper — `scrape.mjs` v2
 ```bash
-./snail scrape https://example.com h1           # получить текст
-./snail scrape https://example.com a href       # получить атрибуты
-./snail scrape https://example.com div text      # все div с текстом
+# Получить текст
+./snail scrape https://example.com h1
+./snail scrape page.html "h1,h2,h3" text
+
+# Получить атрибуты
+./snail scrape https://example.com a href
+./snail scrape https://example.com img src
+
+# Первый элемент или count
+./snail scrape https://example.com ".post h2" first
+./snail scrape https://example.com "li" count
+
+# JSON path
+./snail scrape https://api.example.com/data {results[0].name}
 ```
 
-### Code Analyzer — `analyze.mjs`
+### Code Analyzer — `analyze.mjs` v2
 ```bash
-./snail analyze tree                    # дерево файлов
-./snail analyze deps src/main.js        # зависимости файла
-./snail analyze find "functionName"     # найти использования
-./snail analyze exports                 # все экспорты
-./snail analyze imports                 # все импорты
+# Дерево файлов (глубина 3 по умолчанию)
+./snail analyze tree
+./snail analyze tree src 5
+
+# Зависимости файла
+./snail analyze deps tools/runtime/fetch.mjs
+
+# Найти использования
+./snail analyze find "functionName"
+./snail analyze find "Vl" -c     # case-sensitive
+
+# Все экспорты
+./snail analyze exports
+
+# Внешние импорты
+./snail analyze imports
+
+# Статистика
+./snail analyze stats
 ```
 
-### Diff — `diff.mjs`
+### Diff — `diff.mjs` v2
 ```bash
-./snail diff file1.js file2.js          # сравнить файлы
-./snail diff -i "old" "new"            # сравнить строки
-./snail diff -s file1 file2            # side-by-side
+# Обычный diff
+./snail diff file1.js file2.js
+
+# Side-by-side
+./snail diff -s file1.js file2.js
+
+# Только статистика
+./snail diff --stat file1.js file2.js
+
+# Игнорировать пробелы
+./snail diff -w old.txt new.txt
+
+# Сравнить строки
+./snail diff -i "hello world" "hello there"
 ```
 
 ### Interactive REPL — `repl.mjs`
@@ -44,30 +92,30 @@ PhD-level engineering environment для автономной работы.
 ./snail repl
 ```
 Доступные модули:
-- `store` — in-memory хранилище переменных
+- `store` — in-memory хранилище
 - `ws` — доступ к workspace (ws.read(file), ws.list())
-- `json` — JSON utilities
-- `str` — String utilities (camelCase, kebabCase, etc.)
-- `math` — Math utilities (clamp, lerp, degToRad, etc.)
-- `date` — Date utilities
+- `json` — JSON utilities (parse, stringify, pretty)
+- `str` — String utilities (camelCase, kebabCase, snake_case, etc.)
+- `math` — Math utilities (clamp, lerp, degToRad, sum, avg, median)
+- `date` — Date utilities (now, utc, format)
+- `fetch` — Node.js built-in fetch
 
 ## Структура
 
 ```
 tools/runtime/
 ├── package.json          # зависимости npm
-├── node_modules/         # установленные пакеты
-├── fetch.mjs             # HTTP клиент
-├── scrape.mjs            # веб-скрапер
-├── analyze.mjs           # анализатор кода
-├── diff.mjs              # diff утилита
-├── repl.mjs              # интерактивный REPL
-└── snail.js              # главный лаунчер
+├── node_modules/        # cheerio, lodash
+├── fetch.mjs            # HTTP клиент v2
+├── scrape.mjs           # веб-скрапер v2
+├── analyze.mjs           # анализатор кода v2
+├── diff.mjs             # diff утилита v2
+├── repl.mjs             # интерактивный REPL
+└── snail.js             # лаунчер
 ```
 
 ## Расширение
 
-Чтобы добавить новый инструмент:
 1. Создать `newtool.mjs` в `tools/runtime/`
-2. Добавить запись в `snail.js` в объект TOOLS
-3. Не забыть сделать файл исполняемым: `chmod +x newtool.mjs`
+2. Добавить запись в `snail.js`
+3. `chmod +x newtool.mjs`
