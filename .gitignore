@@ -21,8 +21,24 @@ Thumbs.db
 .openclaw/
 .clawhub/
 
-# Secrets (should never be committed)
+# Environment files (may contain API keys)
 .env
+.env.*
 *.env
 secrets/
 credentials/
+
+# Secrets storage (local only, never commit)
+.secrets/
+
+# Cron backups (contain system-specific data)
+cron-backup/
+
+# OpenClaw config (contains real API keys and tokens)
+# Use openclaw.template.json as template
+openclaw.json
+*.backup.*
+
+# Backup files
+*.bak
+*.backup

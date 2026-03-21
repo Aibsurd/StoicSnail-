@@ -1,0 +1,63 @@
+{
+  "_comment": "Stoic Snail - OpenClaw Configuration Template",
+  "_version": "2026-03-21",
+  "_instructions": "Заполните PLACEHOLDER значения реальными данными",
+  
+  "env": {
+    "vars": {
+      "OPENROUTER_API_KEY": "PLACEHOLDER_OPENROUTER_API_KEY",
+      "SEARXNG_URL": "http://searxng:8080"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/minimax/minimax-m2.7"
+      },
+      "models": {
+        "openrouter/auto": {
+          "alias": "OpenRouter"
+        }
+      }
+    }
+  },
+  "tools": {
+    "web": {
+      "search": {
+        "provider": "searxng"
+      }
+    }
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": {
+      "dangerouslyAllowHostHeaderOriginFallback": true,
+      "allowInsecureAuth": true,
+      "dangerouslyDisableDeviceAuth": true
+    },
+    "auth": {
+      "mode": "token",
+      "token": "PLACEHOLDER_GATEWAY_TOKEN"
+    }
+  },
+  "plugins": {
+    "entries": {
+      "searxng": {
+        "enabled": true,
+        "package": "@openclaw/plugins.searxng"
+      },
+      "memory-qdrant": {
+        "enabled": true,
+        "package": "@openclaw/plugins.memory-qdrant"
+      }
+    }
+  }
+}

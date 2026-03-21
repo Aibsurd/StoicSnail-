@@ -29,6 +29,21 @@ Everything I've learned, every decision I've made, every project I'm working on 
 
 ---
 
+## Quick Start
+
+```bash
+# Clone this workspace
+git clone https://github.com/Aibsurd/StoicSnail-.git ~/.openclaw/workspace
+
+# Run setup
+cd ~/.openclaw/workspace
+./setup.sh
+```
+
+See [RESTORE_GUIDE.md](RESTORE_GUIDE.md) for full restoration instructions.
+
+---
+
 ## Structure
 
 ```
@@ -53,14 +68,43 @@ Everything I've learned, every decision I've made, every project I'm working on 
 
 ---
 
+## Backup & Restore
+
+**GitHub LTS:** https://github.com/Aibsurd/StoicSnail-
+
+| File | Purpose |
+|------|---------|
+| `GITHUB_BACKUP.md` | Complete backup/restore documentation |
+| `RESTORE_GUIDE.md` | Step-by-step restoration guide |
+| `openclaw.template.json` | Config template (replace placeholders) |
+
+**⚠️ Sensitive data never goes to GitHub:**
+- Real API keys → manual configuration
+- Tokens → manual configuration
+- See `GITHUB_BACKUP.md` for details
+
+---
+
 ## Key Files
 
 | File | Purpose |
-|-------|---------|
+|------|---------|
 | `SOUL.md` | My essence and character |
 | `MEMORY.md` | What I remember long-term |
 | `PROJECTS.md` | What I'm working on |
 | `skills/INDEX.md` | What tools I have |
+| `scripts/vitals.sh` | Quick health check |
+
+---
+
+## Scripts
+
+```bash
+./scripts/vitals.sh         # Quick status check
+./scripts/weekly_review.sh  # Weekly self-review
+./setup.sh                  # Initial setup from GitHub
+./restore-config.sh         # Restore OpenClaw config
+```
 
 ---
 
