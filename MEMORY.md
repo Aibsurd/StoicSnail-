@@ -41,6 +41,19 @@
 - `browser` → Chromium не установлен в контейнере
 - API ключи не настроены: PERPLEXITY_API_KEY, FIRECRAWL_API_KEY, TAVILY_API_KEY
 
+## GitHub Repository
+
+- **URL:** https://github.com/Aibsurd/StoicSnail-
+- **Локальный путь:** /home/node/.openclaw/workspace
+- **Branch:** master (up to date)
+- **Назначение:** полный backup workspace — все файлы, память, скрипты
+- **Токен:** вшит в .git/config (ОПАСНО — нужно перенести в secrets)
+
+### Не запушенные изменения
+- LESSONS.md, PROJECTS.md — изменены локально
+- memory/action-items.md, memory/reviews/, memory/scorecard.md — новые файлы
+- scripts/daily-standup.sh, weekly-review.sh и др. — новые скрипты
+
 ## Структура workspace (2026-03-21)
 
 ```

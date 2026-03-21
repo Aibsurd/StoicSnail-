@@ -15,9 +15,11 @@
 **Задачи:**
 - [x] Аудит identity и памяти (2026-03-21)
 - [x] Рефакторинг всех файлов (2026-03-21)
-- [ ] Изучить system prompt assembly
-- [ ] Понять compaction mechanism
-- [ ] Изучить plugin API
+- [x] Изучить system prompt assembly (2026-03-21) ✅
+- [x] Понять compaction mechanism (2026-03-21) ✅
+- [x] Изучить plugin API (2026-03-21) ✅
+- [ ] Понять agent loop и streaming (2026-03-21) — записать
+- [ ] Понять context engine (2026-03-21) — записать
 - [ ] Настроить периодические self-reviews
 
 **Notes:**

@@ -1,0 +1,52 @@
+{
+  "snapshotVersion": 1,
+  "collectedAt": "2026-03-21T18:03:39+00:00",
+  "date": "2026-03-21",
+  "dayOfWeek": 6,
+  "isWeeklyReviewDay": false,
+  "isMonthlyReviewDay": false,
+  "workspace": {
+    "sizeKB": 630,
+    "totalFiles": 147,
+    "mdFilesRoot": 22,
+    "scriptsCount": 15,
+    "scriptsExecutable": 15
+  },
+  "memory": {
+    "todayFileSize": 9731,
+    "todayFileLines": 205,
+    "totalSizeKB": 20,
+    "filesCount": 3
+  },
+  "context": {
+    "filesCount": 22,
+    "totalSizeKB": 64
+  },
+  "projects": {
+    "active": 2,
+    "completed": 0
+0,
+    "total": 6,
+    "pending": 11
+  },
+  "skills": {
+    "active": 8
+  },
+  "git": {
+    "commitsLast24h": 13,
+    "commitsLast7d": 13,
+    "aheadOfRemote": 0,
+    "uncommittedFiles": 10
+  },
+  "system": {
+    "openclawVersion": "OpenClaw 2026.3.14",
+    "gatewayRunning": true,
+    "diskUsagePct": 82,
+    "memoryAvailableKB": "14818276",
+    "configSize": 1905
+  },
+  "reviews": {
+    "weeklyCount": 0,
+    "monthlyCount": 0
+  }
+}
