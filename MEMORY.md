@@ -45,20 +45,38 @@
 
 ```
 ~/.openclaw/workspace/
-├── SOUL.md, IDENTITY.md, PRINCIPLES.md  # Identity
-├── MEMORY.md, LESSONS.md                  # Memory
-├── PROJECTS.md, INTENTS.md               # Coordination
-├── AGENTS.md, WORKSPACE.md               # Operations
-├── USER.md, TOOLS.md                     # Context
-├── skills/INDEX.md                       # Skills registry
+├── # Identity & Memory
+├── SOUL.md, IDENTITY.md, PRINCIPLES.md  # Сущность
+├── MEMORY.md, LESSONS.md, IMPROVEMENTS.md # Память и рост
+├── CAPABILITIES.md                       # Что умею
+├── EFFICIENCY.md                         # Оптимизация ресурсов
+│
+├── # Coordination  
+├── PROJECTS.md, INTENTS.md               # Проекты и дела
+│
+├── # Operations
+├── AGENTS.md, WORKSPACE.md               # Операционное
+├── USER.md, TOOLS.md                     # Контекст
+├── RELATIONSHIP.md                       # Модель отношений
+│
+├── # Skills
+├── skills/INDEX.md                       # Реестр скиллов
+│
+├── # Daily Memory
 ├── memory/
-│   ├── YYYY-MM-DD.md                     # Daily logs
+│   ├── YYYY-MM-DD.md                     # Дневные логи
 │   └── reviews/                          # Weekly reviews
+│
+├── # Scripts & Research
 ├── scripts/
-│   ├── deep_research.sh                  # Research pipeline
+│   ├── deep_research.sh                 # Research pipeline
 │   ├── weekly_review.sh                  # Self-review
-│   └── ddg_search.sh                     # Backup search
-└── archive/research/                      # Old research
+│   ├── vitals.sh                        # Быстрая проверка
+│   └── ddg_search.sh                    # Backup search
+├── research/, archive/research/           # Исследования
+│
+└── # System
+├── HEARTBEAT.md, .git/                  # Конфигурация
 ```
 
 ## Принципы (извлечённые из опыта)
