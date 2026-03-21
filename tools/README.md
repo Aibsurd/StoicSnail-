@@ -87,7 +87,28 @@ PhD-level engineering environment для автономной работы. v2.1
 ./snail diff -i "hello world" "hello there"
 ```
 
-### SQLite Database — `db.mjs` ⭐ NEW
+### Scratch Pad — `scratch.mjs` ⭐ NEW
+```bash
+# Add notes
+./snail scratch add "Quick thought"
+./snail scratch add '{"todo":"something"}'
+
+# List and show
+./snail scratch list
+./snail scratch show 1
+./snail scratch last
+
+# Edit and delete
+./snail scratch edit 1 "Updated content"
+./snail scratch del 3
+
+# Search
+./snail scratch grep "TODO"
+./snail scratch tag 2 important
+./snail scratch by-tag bug
+```
+
+### SQLite Database — `db.mjs`
 ```bash
 # Query
 ./snail db query "SELECT * FROM memory WHERE key LIKE 'project%'"
@@ -181,7 +202,8 @@ tools/runtime/
 ├── analyze.mjs           # анализатор кода v2
 ├── diff.mjs             # diff утилита v2
 ├── pipe.mjs             # data pipeline v1.1
-├── db.mjs               # SQLite database ⭐ NEW
+├── db.mjs               # SQLite database
+├── scratch.mjs          # scratch pad ⭐ NEW
 ├── repl.mjs             # интерактивный REPL
 └── snail.js             # лаунчер
 ```

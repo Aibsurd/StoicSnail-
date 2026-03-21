@@ -45,6 +45,11 @@ const TOOLS = {
     desc: 'SQLite database: query, set, get, list, backup',
     usage: 'snail db <command> [args]',
     run: () => spawn('node', [join(__dirname, 'db.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
+  },
+  scratch: {
+    desc: 'Scratch pad: quick persistent notes',
+    usage: 'snail scratch <command> [args]',
+    run: () => spawn('node', [join(__dirname, 'scratch.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
   }
 };
 
@@ -76,6 +81,8 @@ if (!tool || tool === 'help' || tool === '--help' || tool === '-h') {
   console.log('  snail pipe @json:\'[1,2,3]\' .sum');
   console.log('  snail db list memory');
   console.log('  snail db query "SELECT * FROM memory"');
+  console.log('  snail scratch add "Quick note"');
+  console.log('  snail scratch list');
   console.log('  snail repl');
   process.exit(0);
 }
