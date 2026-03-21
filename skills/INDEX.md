@@ -29,7 +29,7 @@
 #### local-research
 ```
 Путь: /app/skills/local-research/SKILL.md
-Статус: ✅ работает
+Статус: ✅ работает (обновлён 2026-03-21)
 Назначение: Глубокие веб-исследования
 Trigger: "research X", "find info about X", "investiguate X"
 ```
@@ -39,7 +39,12 @@ Trigger: "research X", "find info about X", "investiguate X"
 - Новости и аналитика
 - Факты с проверкой
 
-**Проблемы:** Текущий парсинг SearXNG нестабилен для compound queries. Нужен рефакторинг.
+**Как использовать:**
+```bash
+./scripts/deep_research.sh "topic" [output_dir]
+```
+
+**Примечание:** Скрипт обновлён (2026-03-21) — улучшен парсинг, простые queries вместо compound.
 
 ---
 
@@ -100,6 +105,20 @@ Trigger: "pairing failed", "node connect", "QR code"
 - Проблемы с подключением Android/iOS/macOS
 - Ошибки pairing
 - Tailscale/network issues
+
+---
+
+#### session-logs
+```
+Путь: /app/skills/session-logs/SKILL.md
+Статус: ✅ доступен
+Назначение: Поиск в истории сессий
+Trigger: "what did we discuss before", "previous conversation"
+```
+**Когда использовать:**
+- Operator спрашивает о предыдущих разговорах
+- Анализ истории
+- Восстановление контекста
 
 ---
 

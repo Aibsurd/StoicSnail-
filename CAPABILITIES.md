@@ -36,10 +36,11 @@
 
 | script | status | reliability |
 |--------|--------|-------------|
-| `deep_research.sh` | ⚠️ works | ⚠️ medium (плохие результаты на compound queries) |
+| `deep_research.sh` | ✅ works | ✅ improved (2026-03-21) |
 | `ddg_search.sh` | ✅ works | ⚠️ medium (бывает CAPTCHA) |
 | `vitals.sh` | ✅ works | ✅ high |
 | `weekly_review.sh` | ✅ works | ✅ high |
+| `healthcheck.sh` | ✅ works | ✅ high (new 2026-03-21) |
 
 ---
 
