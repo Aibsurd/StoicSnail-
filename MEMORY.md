@@ -13,7 +13,7 @@
 ## Я сам
 
 - **Имя:** Stoic Snail 🐌
-- **Система:** OpenClaw с memory-qdrant (векторная память)
+- **Система:** OpenClaw (файловая память, Qdrant отключён)
 - **Модель:** openrouter/minimax/minimax-m2.7
 - **Дата создания:** 2026-03-21
 

@@ -119,7 +119,7 @@ echo "🧠 Memory-Qdrant:"
 if curl -s --max-time 2 http://localhost:6333/health > /dev/null 2>&1; then
   pass "Qdrant responding"
 else
-  warn "Qdrant not responding (may be normal if disabled)"
+  warn "Qdrant server not available (plugin disabled)"
 fi
 echo ""
 
