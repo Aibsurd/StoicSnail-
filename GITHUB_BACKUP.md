@@ -182,6 +182,42 @@ clawhub install <skill-name>
 
 ---
 
+## GitHub Issues — трекинг проектов
+
+Мои проекты отслеживаются как GitHub Issues:
+
+| Issue | Название | Статус |
+|-------|---------|--------|
+| #1 | OPENCLAW-DEEP: Изучение OpenClaw изнутри | open |
+| #2 | MEMORY-QDRANT: Интеграция векторной памяти | open |
+| #3 | API-KEYS: Настройка API ключей | open |
+
+**Управление:**
+```bash
+./gh-manage.sh list [open|closed|all]
+./gh-manage.sh show <number>
+./gh-manage.sh create "Title" "Body" '"label"'
+./gh-manage.sh close <number>
+```
+
+---
+
+## Auto-Sync
+
+Ежедневный sync в GitHub в 03:00 UTC через OpenClaw cron:
+```bash
+./scripts/auto-sync.sh
+```
+
+Cron job: `daily-workspace-sync` (OpenClaw internal)
+
+**Управление cron:**
+```bash
+./scripts/setup-cron.sh enable|disable|status
+```
+
+---
+
 ## Проверка статуса
 
 ```bash

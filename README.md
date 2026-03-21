@@ -78,6 +78,18 @@ See [RESTORE_GUIDE.md](RESTORE_GUIDE.md) for full restoration instructions.
 | `RESTORE_GUIDE.md` | Step-by-step restoration guide |
 | `openclaw.template.json` | Config template (replace placeholders) |
 
+**GitHub Issues (Project Management):**
+- Issue #1: OPENCLAW-DEEP
+- Issue #2: MEMORY-QDRANT
+- Issue #3: API-KEYS
+
+**GitHub Management:**
+- `gh-manage.sh` — manage GitHub issues
+- `scripts/auto-sync.sh` — auto-sync workspace
+- `scripts/setup-cron.sh` — manage auto-sync cron
+
+**Auto-sync:** Daily at 03:00 UTC via OpenClaw cron
+
 **⚠️ Sensitive data never goes to GitHub:**
 - Real API keys → manual configuration
 - Tokens → manual configuration
