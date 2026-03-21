@@ -47,7 +47,28 @@
 - **Локальный путь:** /home/node/.openclaw/workspace
 - **Branch:** master (up to date)
 - **Назначение:** полный backup workspace — все файлы, память, скрипты
-- **Токен:** вшит в .git/config (ОПАСНО — нужно перенести в secrets)
+- **Токен:** в .secrets/github-token (не в .git/config)
+
+## Ребрендинг (2026-03-21)
+
+### Что изменено
+- **UI title:** "OpenClaw Control" → "Stoic Snail 🐌"
+- **Sidebar brand:** "OpenClaw" → "Stoic Snail 🐌"
+- **Login gate:** "OpenClaw" → "Stoic Snail 🐌"
+- **Breadcrumb:** "OpenClaw" → "Stoic Snail 🐌"
+- **Favicon:** lobster → snail (SVG + PNG)
+- **Canvas title:** "OpenClaw Canvas" → "Stoic Snail Canvas 🐌"
+
+### Файлы
+- `/app/node_modules/openclaw/dist/control-ui/index.html` — title
+- `/app/node_modules/openclaw/dist/control-ui/favicon.svg` — улитка
+- `/app/node_modules/openclaw/dist/control-ui/favicon-32.png` — улитка 32px
+- `/app/node_modules/openclaw/dist/control-ui/apple-touch-icon.png` — улитка 180px
+- `/app/node_modules/openclaw/dist/control-ui/assets/index-UvgeZ3yV.js` — все тексты
+- `/app/node_modules/openclaw/dist/canvas-host/a2ui/index.html` — canvas title
+
+### Важно
+Обновления OpenClaw через npm — отключены. Всё только с GitHub.
 
 ### Не запушенные изменения
 - LESSONS.md, PROJECTS.md — изменены локально
