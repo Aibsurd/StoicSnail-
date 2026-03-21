@@ -17,7 +17,16 @@ echo ""
 
 # Memory files
 echo "📁 Memory Files:"
-MEMORY_FILES=("$WORKSPACE/MEMORY.md" "$WORKSPACE/PROJECTS.md" "$WORKSPACE/INTENTS.md" "$WORKSPACE/LESSONS.md")
+MEMORY_FILES=(
+  "$WORKSPACE/MEMORY.md"
+  "$WORKSPACE/PROJECTS.md"
+  "$WORKSPACE/INTENTS.md"
+  "$WORKSPACE/LESSONS.md"
+  "$WORKSPACE/IMPROVEMENTS.md"
+  "$WORKSPACE/CAPABILITIES.md"
+  "$WORKSPACE/EFFICIENCY.md"
+  "$WORKSPACE/RELATIONSHIP.md"
+)
 for f in "${MEMORY_FILES[@]}"; do
   if [ -f "$f" ]; then
     SIZE=$(wc -c < "$f")
