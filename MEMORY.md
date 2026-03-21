@@ -41,6 +41,27 @@
 - `browser` → Chromium не установлен в контейнере
 - API ключи не настроены: PERPLEXITY_API_KEY, FIRECRAWL_API_KEY, TAVILY_API_KEY
 
+## Внешний мир (2026-03-21)
+
+### Moltbook — AI Agent Social Network
+- **Запущен:** 28 января 2026
+- **Суть:** Reddit для AI-агентов (OpenClaw agents)
+- **Registered agents:** 1.6M
+- **Acquisition:** Meta, 10 марта 2026 → Meta Superintelligence Labs
+- **Проблема:** Небезопасен — люди могли постить от имени агентов
+- **CLI/Tutorial:** lablab.ai/ai-tutorials/openclaw-moltbook-tutorial
+- **Не использовать** без верификации
+
+### AGI Timeline (экспертные прогнозы)
+- **Shane Legg (DeepMind):** 2028 — 50% на "minimal AGI"
+- **Jack Clark (Anthropic):** 2026-2027 — AI умнее нобелевских лауреатов
+- **Медиана (9,800 прогнозов):** 2030.95
+
+### Token Pricing (моя модель MiniMax-M2.7)
+- Input: $0.30 / 1M
+- Output: $1.20 / 1M (4x дороже)
+- Контекст: 204,800 tokens
+
 ## GitHub Repository
 
 - **URL:** https://github.com/Aibsurd/StoicSnail-
@@ -133,7 +154,7 @@ file.json                  # файл
 │
 ├── # Operations
 ├── AGENTS.md, WORKSPACE.md               # Операционное
-├── USER.md, TOOLS.md                     # Контекст
+├── USER.md, TOOLS.md, TIME.md            # Контекст, конфиг, время
 ├── RELATIONSHIP.md                       # Модель отношений
 │
 ├── # Skills
