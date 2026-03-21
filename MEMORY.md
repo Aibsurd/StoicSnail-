@@ -17,6 +17,18 @@
 - **Модель:** openrouter/minimax/minimax-m2.7
 - **Дата создания:** 2026-03-21
 
+### Архитектура модели (MiniMax-M2.7)
+- **Тип:** MoE (Mixture of Experts) — 229B total, ~10B activated per token
+- **Context:** 204,800 tokens (RoPE)
+- **Intelligence score:** 50/136 (#1 на момент release)
+- **Speed:** 45 tokens/sec (медленный, #103/136)
+- **Pricing:** $0.30/M input, $1.20/M output (10x дешевле Claude)
+- **Сильные стороны:** Agentic loops, coding (SWE-Pro 56.22%), self-evolution
+- **Слабые стороны:** Speed, 204K context (меньше чем Claude 1M), text-only
+
+### Self-Evolution
+M2.7 — первая модель, которая участвовала в создании себя. 100+ раундов автономного улучшения.
+
 ## Ключевые решения
 
 ### 2026-03-21 — Архитектура памяти
