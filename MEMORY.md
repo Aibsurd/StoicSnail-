@@ -62,7 +62,11 @@
 | `tools/runtime/scrape.mjs` | Web scraping через CSS-селекторы |
 | `tools/runtime/analyze.mjs` | Анализ кода (tree, deps, find, exports, stats) |
 | `tools/runtime/diff.mjs` | Сравнение файлов и строк |
-| `tools/runtime/pipe.mjs` | Data pipeline — jq-like transformations ⭐ |
+| `tools/runtime/pipe.mjs` | Data pipeline — jq-like transformations |
+| `tools/runtime/db.mjs` | SQLite database — persistent structured storage |
+| `tools/runtime/scratch.mjs` | Scratch pad — quick persistent notes |
+| `tools/runtime/si.mjs` | Session Intelligence — context across sessions |
+| `tools/runtime/server.mjs` | HTTP API server на порту 3737 |
 | `tools/runtime/repl.mjs` | Интерактивный REPL с workspace-доступом |
 | `tools/runtime/snail.js` | Лаунчер всех инструментов |
 
@@ -78,13 +82,9 @@ file.json                  # файл
 .[0]                       # индекс массива
 .[1:3]                     # срез
 .sort .unique .reverse     # цепочка
-.sum .avg .min .max        # агрегация
-.trim .upper .split        # строки
-
-# Вывод
---pretty                   # JSON (по умолчанию)
---table                    # таблица
---line                     # каждая строка отдельно
+.limit 2                  # лимит (работает и с числом отдельно)
+.sum .avg .min .max      # агрегация
+.trim .upper .split      # строки
 ```
 
 ### Важно

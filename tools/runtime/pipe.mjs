@@ -85,6 +85,10 @@ let hasTransforms = false;
 for (let i = 1; i < args.length; i++) {
   if (args[i].startsWith('--')) {
     outputMode = args[i];
+  } else if (args[i] === '.limit' && args[i+1] && /^\d+$/.test(args[i+1])) {
+    // Special case: .limit followed by a number
+    transforms.push(`.limit(${args[++i]})`);
+    hasTransforms = true;
   } else {
     transforms.push(args[i]);
     hasTransforms = true;
@@ -183,8 +187,13 @@ function applyTransforms(data, transforms) {
     else if (t === '.sort') {
       result = Array.isArray(result) ? [...result].sort() : result;
     }
-    else if (t.startsWith('.limit')) {
-      const n = parseInt(t.match(/\.limit\((\d+)\)/)?.[1] || t.match(/\.(\d+)/)?.[1]);
+    else if (t.startsWith('.limit') || t.match(/^\.(\d+)$/)) {
+      let n;
+      if (t.match(/^\.(\d+)$/)) {
+        n = parseInt(t.match(/^\.(\d+)$/)[1]);
+      } else {
+        n = parseInt(t.match(/\.limit\((\d+)\)/)?.[1]);
+      }
       if (n) result = Array.isArray(result) ? result.slice(0, n) : result;
     }
     // Object transforms

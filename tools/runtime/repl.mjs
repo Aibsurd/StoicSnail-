@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 import * as readline from 'readline';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const WORKSPACE = resolve(__dirname, '../../../..');
+const WORKSPACE = resolve(__dirname, '../..');
 
 // In-memory store for variables
 const store = {
@@ -181,9 +181,13 @@ rl.on('line', async (line) => {
   
   // Try to evaluate
   try {
-    // Make store and utilities available
-    const evalCtx = Object.keys(context).join(', ');
-    const result = eval(`(function() { with(context) { return ${input}; } })()`);
+    // Create function with context variables in scope
+    const ctxVars = Object.entries(context).reduce((acc, [k, v]) => {
+      acc[k] = v;
+      return acc;
+    }, {});
+    const fn = new Function(...Object.keys(ctxVars), `return ${input}`);
+    const result = fn(...Object.values(ctxVars));
     if (result !== undefined) {
       console.log(typeof result === 'object' ? JSON.stringify(result, null, 2) : result);
     }
