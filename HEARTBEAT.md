@@ -23,6 +23,17 @@
    - Plugins enabled?
 3. Если проблема → записать в memory/YYYY-MM-DD.md + alert
 
+### self-test (ежедневно в 09:00 UTC)
+**Триггер:** Ежедневно в 09:00 UTC
+**Действие:**
+1. Запустить `scripts/self-test.sh`
+2. Проверить результаты:
+   - Все critical files exist?
+   - Scripts executable?
+   - Git clean?
+   - Resources OK (disk < 90%)?
+3. Если FAIL → записать в memory/YYYY-MM-DD.md + alert
+
 ### daily-workspace-sync (03:00 UTC)
 **Триггер:** Ежедневно в 03:00 UTC
 **Действие:**
@@ -66,7 +77,8 @@
 ## Cron Jobs
 
 ```
-checkpoint-monitor  */30 * * * *  → scripts/checkpoint.sh
-health-monitor      */120 * * * * → scripts/healthcheck.sh
-daily-workspace-sync 0 3 * * *    → scripts/auto-sync.sh
+checkpoint-monitor   */30 * * * *  → scripts/checkpoint.sh
+health-monitor       0 */2 * * *    → scripts/healthcheck.sh
+daily-self-test      0 9 * * *     → scripts/self-test.sh
+daily-workspace-sync 0 3 * * *     → scripts/auto-sync.sh
 ```

@@ -126,6 +126,18 @@ Checkpoint triggers:
             │
             ▼
 ┌─────────────────────────────────────────────┐
+│  Self-Test (scripts/self-test.sh)            │
+├─────────────────────────────────────────────┤
+│  ✓ Critical files exist?                     │
+│  ✓ Scripts executable + functional?          │
+│  ✓ Git status clean?                         │
+│  ✓ Resources OK (disk < 90%)?               │
+│  ✓ Gateway alive?                            │
+│  ✓ Remote accessible?                       │
+└─────────────────────────────────────────────┘
+            │
+            ▼
+┌─────────────────────────────────────────────┐
 │  Heartbeat (HEARTBEAT.md + cron)            │
 ├─────────────────────────────────────────────┤
 │  • Периодический self-check                 │
