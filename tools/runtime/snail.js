@@ -35,6 +35,11 @@ const TOOLS = {
     desc: 'Interactive Node.js REPL with workspace access',
     usage: 'snail repl',
     run: () => spawn('node', [join(__dirname, 'repl.mjs')], { stdio: 'inherit' })
+  },
+  pipe: {
+    desc: 'Data pipeline: transform JSON/data with chainable ops',
+    usage: 'snail pipe <source> [transforms...] [--output]',
+    run: () => spawn('node', [join(__dirname, 'pipe.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
   }
 };
 
@@ -62,7 +67,8 @@ if (!tool || tool === 'help' || tool === '--help' || tool === '-h') {
   console.log('  snail analyze tree');
   console.log('  snail analyze find "functionName"');
   console.log('  snail diff file1.js file2.js');
-  console.log('  snail diff -i "hello world" "hello there"');
+  console.log('  snail diff -i "old" "new"');
+  console.log('  snail pipe @json:\'[1,2,3]\' .sum');
   console.log('  snail repl');
   process.exit(0);
 }
