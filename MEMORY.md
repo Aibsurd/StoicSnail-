@@ -49,6 +49,38 @@
 - **Назначение:** полный backup workspace — все файлы, память, скрипты
 - **Токен:** в .secrets/github-token (не в .git/config)
 
+## Python/Node.js среда (tools/runtime)
+
+### Установленные пакеты
+- `cheerio` — HTML parsing
+- `lodash` — utility functions
+
+### Инструменты
+| Инструмент | Назначение |
+|------------|------------|
+| `tools/runtime/fetch.mjs` | HTTP-клиент (GET/POST, headers, JSON) |
+| `tools/runtime/scrape.mjs` | Web scraping через CSS-селекторы |
+| `tools/runtime/analyze.mjs` | Анализ кода (tree, deps, find, exports) |
+| `tools/runtime/diff.mjs` | Сравнение файлов и строк |
+| `tools/runtime/repl.mjs` | Интерактивный REPL с workspace-доступом |
+| `tools/runtime/snail.js` | Лаунчер всех инструментов |
+
+### Использование
+```bash
+./snail help                    # показать все инструменты
+./snail fetch <url> -j         # GET с JSON-ответом
+./snail scrape <url> h1        # вытащить все h1
+./snail analyze tree            # дерево проекта
+./snail analyze find "func"    # найти использования
+./snail diff file1 file2       # сравнить файлы
+./snail repl                   # интерактивный REPL
+```
+
+### Важно
+- Все Node.js-скрипты используют ES modules (.mjs)
+- Node 24 имеет встроенный fetch
+- tools/runtime/node_modules/ — локальные пакеты
+
 ## Ребрендинг (2026-03-21)
 
 ### Что изменено

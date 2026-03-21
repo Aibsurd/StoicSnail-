@@ -1,0 +1,15 @@
+{
+  "name": "stoic-snail-tools",
+  "version": "1.0.0",
+  "description": "PhD-level engineering tools for Stoic Snail",
+  "type": "module",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "lodash": "^4.17.21"
+  },
+  "scripts": {
+    "repl": "node --input-type=module",
+    "eval": "node -e",
+    "fetch": "node tools/fetch.mjs"
+  }
+}
