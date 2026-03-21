@@ -87,7 +87,35 @@ PhD-level engineering environment для автономной работы. v2.1
 ./snail diff -i "hello world" "hello there"
 ```
 
-### Scratch Pad — `scratch.mjs` ⭐ NEW
+### Session Intelligence — `si.mjs` ⭐ NEW
+```bash
+# Start tracking a session
+./snail si start "my-project"
+
+# Record decisions and insights
+./snail si decisions "Chose SQLite because it's simple and fast"
+./snail si decisions "Built scratch pad for temporary notes"
+./snail si blockers "Need better error handling"
+
+# Set next actions
+./snail si next "Continue with X, start Y next"
+
+# View status and history
+./snail si status
+./snail si sessions
+./snail si insights
+./snail si patterns
+
+# Set working context
+./snail si set-context "my-project" "Working on feature X"
+
+# End session
+./snail si end
+```
+
+This is the most important tool - it gives me memory that persists across sessions.
+
+### Scratch Pad — `scratch.mjs`
 ```bash
 # Add notes
 ./snail scratch add "Quick thought"
