@@ -40,6 +40,11 @@ const TOOLS = {
     desc: 'Data pipeline: transform JSON/data with chainable ops',
     usage: 'snail pipe <source> [transforms...] [--output]',
     run: () => spawn('node', [join(__dirname, 'pipe.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
+  },
+  db: {
+    desc: 'SQLite database: query, set, get, list, backup',
+    usage: 'snail db <command> [args]',
+    run: () => spawn('node', [join(__dirname, 'db.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
   }
 };
 
@@ -69,6 +74,8 @@ if (!tool || tool === 'help' || tool === '--help' || tool === '-h') {
   console.log('  snail diff file1.js file2.js');
   console.log('  snail diff -i "old" "new"');
   console.log('  snail pipe @json:\'[1,2,3]\' .sum');
+  console.log('  snail db list memory');
+  console.log('  snail db query "SELECT * FROM memory"');
   console.log('  snail repl');
   process.exit(0);
 }

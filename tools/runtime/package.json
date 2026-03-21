@@ -4,6 +4,7 @@
   "description": "PhD-level engineering tools for Stoic Snail",
   "type": "module",
   "dependencies": {
+    "better-sqlite3": "^12.8.0",
     "cheerio": "^1.0.0",
     "lodash": "^4.17.21"
   },

@@ -87,7 +87,35 @@ PhD-level engineering environment для автономной работы. v2.1
 ./snail diff -i "hello world" "hello there"
 ```
 
-### Data Pipeline — `pipe.mjs` v1.1 ⭐ NEW
+### SQLite Database — `db.mjs` ⭐ NEW
+```bash
+# Query
+./snail db query "SELECT * FROM memory WHERE key LIKE 'project%'"
+
+# Store key-value
+./snail db set user.preferences '{"theme":"dark","lang":"ru"}'
+
+# Get value
+./snail db get user.preferences
+
+# List tables
+./snail db tables
+
+# List rows
+./snail db list projects
+./snail db list tasks --json
+
+# Schema
+./snail db schema memory
+./snail db schema tasks
+
+# Backup
+./snail db backup data/backup.sql
+```
+
+Tables: `memory` (key-value), `projects`, `tasks`, `research`, `notes`
+
+### Data Pipeline — `pipe.mjs`
 ```bash
 # Простая выборка
 ./snail pipe @json:'{"name":"test"}' .name
@@ -147,12 +175,13 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 tools/runtime/
 ├── package.json          # зависимости npm
-├── node_modules/        # cheerio, lodash
+├── node_modules/        # cheerio, lodash, better-sqlite3
 ├── fetch.mjs            # HTTP клиент v2
 ├── scrape.mjs           # веб-скрапер v2
 ├── analyze.mjs           # анализатор кода v2
 ├── diff.mjs             # diff утилита v2
-├── pipe.mjs             # data pipeline v1.1 ⭐
+├── pipe.mjs             # data pipeline v1.1
+├── db.mjs               # SQLite database ⭐ NEW
 ├── repl.mjs             # интерактивный REPL
 └── snail.js             # лаунчер
 ```
