@@ -33,7 +33,8 @@ echo "📁 Critical Files:"
 [ -f "$WORKSPACE/SOUL.md" ] && pass "SOUL.md exists" || fail "SOUL.md missing"
 [ -f "$WORKSPACE/RESILIENCE.md" ] && pass "RESILIENCE.md exists" || fail "RESILIENCE.md missing"
 [ -f "$WORKSPACE/SCORECARD.md" ] && pass "SCORECARD.md exists" || fail "SCORECARD.md missing"
-[ -f "$WORKSPACE/memory/2026-03-21.md" ] && pass "Today's log exists" || fail "Today's log missing"
+TODAY=$(date +%Y-%m-%d)
+[ -f "$WORKSPACE/memory/${TODAY}.md" ] && pass "Today's log exists (${TODAY})" || fail "Today's log missing: memory/${TODAY}.md"
 echo ""
 
 # TEST 2: Scripts are executable
@@ -92,25 +93,32 @@ else
 fi
 echo ""
 
-# TEST 6: Cron jobs
+# TEST 6: Cron jobs (via openclaw CLI)
 echo "⏰ Cron Jobs:"
-CRON_JOBS=$(find "$HOME/.openclaw/cron" -name "*.json" 2>/dev/null | wc -l)
-if [ "$CRON_JOBS" -gt 0 ]; then
-  pass "$CRON_JOBS cron job(s) configured"
+CRON_OUT=$(openclaw cron list 2>/dev/null | tail -n +3 | grep -c "cron\|at\|every" 2>/dev/null || echo "0")
+if [ "$CRON_OUT" -gt 0 ] 2>/dev/null; then
+  pass "$CRON_OUT cron job(s) via openclaw"
 else
-  warn "No cron jobs found"
+  # fallback: check directory
+  CRON_JOBS=$(find "$HOME/.openclaw/cron" -name "*.json" 2>/dev/null | wc -l)
+  if [ "$CRON_JOBS" -gt 0 ]; then
+    pass "$CRON_JOBS cron job(s) configured"
+  else
+    warn "Cron jobs count unknown (try: openclaw cron list)"
+  fi
 fi
 echo ""
 
 # TEST 7: Disk space
 echo "💾 Resources:"
 DISK_PCT=$(df "$WORKSPACE" 2>/dev/null | tail -1 | awk '{print $5}' | tr -d '%')
+DISK_AVAIL=$(df -h "$WORKSPACE" 2>/dev/null | tail -1 | awk '{print $4}')
 if [ "$DISK_PCT" -lt 80 ]; then
-  pass "Disk space: ${DISK_PCT}% used"
+  pass "Disk space: ${DISK_PCT}% used (${DISK_AVAIL} free)"
 elif [ "$DISK_PCT" -lt 90 ]; then
-  warn "Disk space: ${DISK_PCT}% used (approaching limit)"
+  warn "Disk space: ${DISK_PCT}% used, ${DISK_AVAIL} free (on overlay/WSL2 this may be inflated)"
 else
-  fail "Disk space CRITICAL: ${DISK_PCT}% used"
+  fail "Disk space CRITICAL: ${DISK_PCT}% used, only ${DISK_AVAIL} free"
 fi
 echo ""
 

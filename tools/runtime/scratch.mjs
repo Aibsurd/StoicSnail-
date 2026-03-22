@@ -48,7 +48,7 @@ if (!cmd || cmd === 'help' || cmd === '--help') {
 
 A persistent notepad for quick notes and drafts.
 
-\x1b[33mCommands:\x1b[0
+\x1b[33mCommands:\x1b[0m
   \x1b[32madd <text>\x1b[0m          Add a note (use quotes for multi-word)
   \x1b[32mlist\x1b[0m                Show all notes
   \x1b[32mshow [n]\x1b[0m            Show note n (or last)

@@ -63,14 +63,24 @@ except Exception as e:
 " 2>/dev/null
 }
 
-# Fetch and extract content from URL
+# Fetch and extract content from URL via curl + basic HTML strip
 fetch_content() {
   local url="$1"
   local max_chars="${2:-2000}"
-  
-  # Use web_fetch tool in actual usage
-  # This is for preview only
-  echo "Fetching: $url"
+
+  # Fetch page, strip HTML tags, collapse whitespace, truncate
+  curl -sL --max-time 10 -A "Mozilla/5.0" "$url" 2>/dev/null \
+    | python3 -c "
+import sys, re
+html = sys.stdin.read()
+# Remove script/style blocks
+html = re.sub(r'<(script|style)[^>]*>.*?</\1>', '', html, flags=re.DOTALL|re.IGNORECASE)
+# Strip all HTML tags
+text = re.sub(r'<[^>]+>', ' ', html)
+# Collapse whitespace
+text = re.sub(r'\s+', ' ', text).strip()
+print(text[:${max_chars}])
+" 2>/dev/null || echo "(fetch failed: $url)"
 }
 
 echo "Research starting for: $TOPIC"
