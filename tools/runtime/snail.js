@@ -55,6 +55,17 @@ const TOOLS = {
     desc: 'Session intelligence: track context across sessions',
     usage: 'snail si <command> [args]',
     run: () => spawn('node', [join(__dirname, 'si.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
+  },
+  think: {
+    desc: 'Structured reasoning: problem → hypothesis → conclusion',
+    usage: 'snail think <kind> <text> | log | chain | summary',
+    run: () => spawn('node', [join(__dirname, 'think.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
+  },
+  agenda: {
+    desc: 'Task & project manager with priorities and status',
+    usage: 'snail agenda <command> [args]',
+    commands: ['add', 'done', 'start', 'block', 'list', 'next', 'stats'],
+    run: () => spawn('node', [join(__dirname, 'agenda.mjs'), ...process.argv.slice(3)], { stdio: 'inherit' })
   }
 };
 
