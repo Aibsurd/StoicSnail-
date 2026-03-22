@@ -155,10 +155,10 @@ file.json                  # файл
 ### Важно
 Обновления OpenClaw через npm — отключены. Всё только с GitHub.
 
-### Не запушенные изменения
-- LESSONS.md, PROJECTS.md — изменены локально
-- memory/action-items.md, memory/reviews/, memory/scorecard.md — новые файлы
-- scripts/daily-standup.sh, weekly-review.sh и др. — новые скрипты
+### Состояние (2026-03-22)
+- Git sync: актуален, clean tree (до audit сессии)
+- Disk: overlay FS показывает ~82% но это артефакт WSL2, реальный диск 1007G, занято 27G (3%)
+- Все 4 cron job активны: checkpoint-monitor, health-monitor, daily-self-test, daily-workspace-sync
 
 ## Структура workspace (2026-03-21)
 
