@@ -7,6 +7,7 @@
 ## Контекст: что уже есть
 
 OpenClaw предоставляет:
+
 - ✅ Agent loop с queue-based serialization
 - ✅ Pluggable context engine (legacy → plugin)
 - ✅ Session persistence (JSONL transcripts + sessions.json)
@@ -112,6 +113,7 @@ Subagents как **parallel cognition units**:
 ```
 
 **Personas для subagents:**
+
 - `explorer`: creative, what-if scenarios, analogies
 - `analyst`: data-driven, evidence-focused, skeptical
 - `challenger`: devil's advocate, finds flaws, stress-tests
@@ -200,6 +202,7 @@ DAG-based workflow decomposition:
 ```
 
 **Flow engine features:**
+
 - Parallel execution where dependencies allow
 - Real-time status tracking
 - Automatic retry with exponential backoff
@@ -335,6 +338,7 @@ Automatic skill synthesis and management:
 ### Phase 1: Foundation (этот документ + базовая структура)
 
 ### Phase 2: Context Engine Plugin
+
 1. Создать plugin manifest
 2. Реализовать memory hierarchy (WM/EM/SM)
 3. Добавить importance scoring
@@ -342,6 +346,7 @@ Automatic skill synthesis and management:
 5. Тестировать на реальных сессиях
 
 ### Phase 3: Parallel Thinking System
+
 1. Создать subagent orchestration layer
 2. Реализовать personas
 3. Построить consensus engine
@@ -349,6 +354,7 @@ Automatic skill synthesis and management:
 5. Dashboard visualization
 
 ### Phase 4: Self-Evolution Engine
+
 1. Session analysis pipeline
 2. Pattern extraction
 3. Identity modification system (с safety rails)
@@ -356,6 +362,7 @@ Automatic skill synthesis and management:
 5. Evolution logging
 
 ### Phase 5: Task Flow Executor
+
 1. DAG representation
 2. Parallel execution engine
 3. Dependency resolution
@@ -363,6 +370,7 @@ Automatic skill synthesis and management:
 5. Result aggregation
 
 ### Phase 6: Analytics Dashboard
+
 1. Metrics collection
 2. Real-time API
 3. Web dashboard
@@ -374,6 +382,7 @@ Automatic skill synthesis and management:
 ## Безопасность и Safety Rails
 
 ### Hard Limits (неизменяемы)
+
 1. **Никаких изменений SOUL.md без верификации** — изменения проходят review cycle
 2. **Никакого self-modification без backup** — git commit перед каждым изменением identity files
 3. **Изоляция evalutation** — self-evolution работает в отдельном subagent
@@ -381,6 +390,7 @@ Automatic skill synthesis and management:
 5. **Audit trail** — полный лог всех self-modifications
 
 ### Soft Limits (конфигурируемые)
+
 1. Частота evolution cycles
 2. Порог significance для изменений
 3. Maximum self-modification per session
@@ -391,11 +401,13 @@ Automatic skill synthesis and management:
 ## Technical Approach
 
 ### Plugin Architecture
+
 - Все системы как OpenClaw plugins
 - Используют существующие hooks: `before_prompt_build`, `after_agent_end`, `before_compaction`
 - Нет модификации core кода
 
 ### Context Engine Contract
+
 ```typescript
 interface CogneXusEngine {
   info: {
@@ -403,18 +415,18 @@ interface CogneXusEngine {
     name: "CogneXus Advanced Memory";
     ownsCompaction: true;
   };
-  
+
   async ingest({ sessionId, message, isHeartbeat }): Promise<{ ingested: boolean; importance?: number }>;
-  
+
   async assemble({ sessionId, messages, tokenBudget }): Promise<{
     messages: Message[];
     estimatedTokens: number;
     systemPromptAddition?: string;
     workingSetStats?: WorkingSetStats;
   }>;
-  
+
   async compact({ sessionId, force }): Promise<{ ok: boolean; compacted: boolean }>;
-  
+
   // New methods for advanced features
   async scoreImportance(sessionId: string, chunkId: string): Promise<number>;
   async retrieveWithAttention(sessionId: string, query: string, k: number): Promise<MemoryChunk[]>;
@@ -423,6 +435,7 @@ interface CogneXusEngine {
 ```
 
 ### Dependencies
+
 - Existing OpenClaw hooks API
 - Existing memory system (для SM layer)
 - Session transcripts (для analysis)
@@ -433,17 +446,20 @@ interface CogneXusEngine {
 ## Success Metrics
 
 ### Memory Efficiency
+
 - Hit rate (WM retrieval vs full context load)
 - Importance accuracy (predicted vs actual utility)
 - Retrieval latency
 
 ### Cognitive Performance
+
 - Task completion rate
 - Parallel thinking adoption
 - Evolution impact (before/after performance)
 - Token efficiency (context used vs output quality)
 
 ### Self-Evolution
+
 - Number of successful adaptations
 - False positive rate (bad changes caught by verification)
 - Rollback frequency

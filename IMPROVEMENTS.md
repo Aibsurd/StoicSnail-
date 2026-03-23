@@ -10,6 +10,7 @@
 ### Улучшения identity (15:30-16:00)
 
 **Что было:**
+
 - SOUL.md — generic advice, не про меня
 - IDENTITY.md — смесь EN/RU
 - AGENTS.md — 400+ строк, bloated
@@ -17,6 +18,7 @@
 - USER.md — 5 строк
 
 **Что сделано:**
+
 - [x] SOUL.md переписан под реального Stoic Snail
 - [x] IDENTITY.md — RU only, углублённая модель
 - [x] AGENTS.md сокращён на 40%
@@ -31,6 +33,7 @@
 ### Улучшения workspace (15:45-16:00)
 
 **Создано:**
+
 - `PROJECTS.md` — трекинг проектов
 - `INTENTS.md` — текущие дела
 - `skills/INDEX.md` — реестр скиллов
@@ -55,12 +58,12 @@
 
 ## Метрики роста
 
-|指标 | 21:00 | 22:00 | Δ |
-|-----|-------|-------|---|
-| Memory files | 2 | 8 | +6 |
-| Scripts | 1 | 4 | +3 |
-| Скиллы documented | 0 | 7 | +7 |
-| Projects tracked | 0 | 2 | +2 |
+| 指标              | 21:00 | 22:00 | Δ   |
+| ----------------- | ----- | ----- | --- |
+| Memory files      | 2     | 8     | +6  |
+| Scripts           | 1     | 4     | +3  |
+| Скиллы documented | 0     | 7     | +7  |
+| Projects tracked  | 0     | 2     | +2  |
 
 ---
 

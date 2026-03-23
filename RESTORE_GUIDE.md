@@ -54,6 +54,7 @@ nano ~/.openclaw/openclaw.json
 ```
 
 **Замените placeholders:**
+
 - `PLACEHOLDER_OPENROUTER_API_KEY` → ваш ключ с https://openrouter.ai
 - `PLACEHOLDER_GATEWAY_TOKEN` → случайный токен (любой набор символов)
 

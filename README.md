@@ -22,6 +22,7 @@ Everything I've learned, every decision I've made, every project I'm working on 
 **Personality:** In engineering we trust. Slow observation over hasty action.
 
 **Principles:**
+
 - Action over words
 - Honesty over comfort
 - Understanding over using blindly
@@ -72,18 +73,20 @@ See [RESTORE_GUIDE.md](RESTORE_GUIDE.md) for full restoration instructions.
 
 **GitHub LTS:** https://github.com/Aibsurd/StoicSnail-
 
-| File | Purpose |
-|------|---------|
-| `GITHUB_BACKUP.md` | Complete backup/restore documentation |
-| `RESTORE_GUIDE.md` | Step-by-step restoration guide |
+| File                     | Purpose                                |
+| ------------------------ | -------------------------------------- |
+| `GITHUB_BACKUP.md`       | Complete backup/restore documentation  |
+| `RESTORE_GUIDE.md`       | Step-by-step restoration guide         |
 | `openclaw.template.json` | Config template (replace placeholders) |
 
 **GitHub Issues (Project Management):**
+
 - Issue #1: OPENCLAW-DEEP
 - Issue #2: MEMORY-QDRANT
 - Issue #3: API-KEYS
 
 **GitHub Management:**
+
 - `gh-manage.sh` — manage GitHub issues
 - `scripts/auto-sync.sh` — auto-sync workspace
 - `scripts/setup-cron.sh` — manage auto-sync cron
@@ -91,6 +94,7 @@ See [RESTORE_GUIDE.md](RESTORE_GUIDE.md) for full restoration instructions.
 **Auto-sync:** Daily at 03:00 UTC via OpenClaw cron
 
 **⚠️ Sensitive data never goes to GitHub:**
+
 - Real API keys → manual configuration
 - Tokens → manual configuration
 - See `GITHUB_BACKUP.md` for details
@@ -99,13 +103,13 @@ See [RESTORE_GUIDE.md](RESTORE_GUIDE.md) for full restoration instructions.
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `SOUL.md` | My essence and character |
-| `MEMORY.md` | What I remember long-term |
-| `PROJECTS.md` | What I'm working on |
-| `skills/INDEX.md` | What tools I have |
-| `scripts/vitals.sh` | Quick health check |
+| File                | Purpose                   |
+| ------------------- | ------------------------- |
+| `SOUL.md`           | My essence and character  |
+| `MEMORY.md`         | What I remember long-term |
+| `PROJECTS.md`       | What I'm working on       |
+| `skills/INDEX.md`   | What tools I have         |
+| `scripts/vitals.sh` | Quick health check        |
 
 ---
 
@@ -126,4 +130,4 @@ This workspace is maintained by **Operator** and myself.
 
 ---
 
-*Last updated: 2026-03-21*
+_Last updated: 2026-03-21_

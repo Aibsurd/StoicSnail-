@@ -8,23 +8,25 @@
 ## Архитектура
 
 ### Тип: Mixture of Experts (MoE)
+
 Это **не одна большая нейросеть**, а команда специалистов.
 
-| Параметр | Значение |
-|----------|----------|
-| **Total params** | 229B (миллиардов) |
-| **Activated per token** | ~10B (4.4% от общего) |
-| **Number of Experts** | 8 |
-| **Active Experts per token** | 2 (Top-2 routing) |
-| **Hidden dimension** | 4096 |
-| **Number of layers** | 32 |
-| **Attention heads** | 32 |
-| **Key-Value heads** | 8 |
-| **Activation function** | SwigLU |
-| **Position embedding** | RoPE (Rotary) |
-| **Normalization** | RMSNorm |
+| Параметр                     | Значение              |
+| ---------------------------- | --------------------- |
+| **Total params**             | 229B (миллиардов)     |
+| **Activated per token**      | ~10B (4.4% от общего) |
+| **Number of Experts**        | 8                     |
+| **Active Experts per token** | 2 (Top-2 routing)     |
+| **Hidden dimension**         | 4096                  |
+| **Number of layers**         | 32                    |
+| **Attention heads**          | 32                    |
+| **Key-Value heads**          | 8                     |
+| **Activation function**      | SwigLU                |
+| **Position embedding**       | RoPE (Rotary)         |
+| **Normalization**            | RMSNorm               |
 
 **Что это значит на практике:**
+
 - При стоимости вычислений как для 10B модели, получаю качество ~200B+
 - "Эксперты" специализируются на разных задачах
 - Top-2 routing = для каждого токена активирую 2 лучших эксперта
@@ -35,13 +37,14 @@
 
 ## Контекст и память
 
-| Параметр | Значение |
-|----------|----------|
-| **Context window** | 204,800 tokens |
-| **Max output** | ~196,608 tokens |
+| Параметр              | Значение                                |
+| --------------------- | --------------------------------------- |
+| **Context window**    | 204,800 tokens                          |
+| **Max output**        | ~196,608 tokens                         |
 | **Position encoding** | RoPE (стабильный на длинных контекстах) |
 
 **Что это значит:**
+
 - Могу видеть ~150,000 слов одновременно
 - Это ~300 страниц текста
 - Long context reasoning (AA-LCR benchmark) — сильная сторона
@@ -51,30 +54,33 @@
 ## Интеллект и бенчмарки
 
 ### Artificial Analysis Intelligence Index
+
 **Score: 50** (среди 136 моделей)
+
 - Средний score: 19
 - **#1 на момент релиза**
 
 ### Бенчмарки по областям
 
-| Бенчмарк | Результат | Что проверяет |
-|----------|-----------|---------------|
-| **SWE-Pro** | 56.22% | Реальные задачи программирования |
-| **Terminal-Bench 2** | 57.0% | Работа в shell/terminal |
-| **GDPval-AA** | 1495 | Agentic задачи в реальном мире |
-| **VIBE-Pro** | 55.6% | End-to-end проекты |
+| Бенчмарк             | Результат | Что проверяет                    |
+| -------------------- | --------- | -------------------------------- |
+| **SWE-Pro**          | 56.22%    | Реальные задачи программирования |
+| **Terminal-Bench 2** | 57.0%     | Работа в shell/terminal          |
+| **GDPval-AA**        | 1495      | Agentic задачи в реальном мире   |
+| **VIBE-Pro**         | 55.6%     | End-to-end проекты               |
 
 ### Сравнение с Claude Sonnet 4.5
 
-| Метрика | M2.7 | Claude Sonnet 4.5 |
-|---------|------|-------------------|
-| **Context** | 204.8K | 1M |
-| **Input price** | $0.30/M | $3.00/M (10x дороже) |
-| **Output price** | $1.20/M | $15.00/M (12.5x дороже) |
-| **Tool use** | ✅ Native | ✅ Native |
-| ** Multimodal** | ❌ Text only | ✅ + Images/Files |
+| Метрика          | M2.7         | Claude Sonnet 4.5       |
+| ---------------- | ------------ | ----------------------- |
+| **Context**      | 204.8K       | 1M                      |
+| **Input price**  | $0.30/M      | $3.00/M (10x дороже)    |
+| **Output price** | $1.20/M      | $15.00/M (12.5x дороже) |
+| **Tool use**     | ✅ Native    | ✅ Native               |
+| ** Multimodal**  | ❌ Text only | ✅ + Images/Files       |
 
 **Вывод:** Я в 10x дешевле Claude, при этом:
+
 - Сопоставимый интеллект (score 50 vs presumably higher для Opus)
 - Лучше для agentic задач (GDPval-AA)
 - Хуже для длинных контекстов (204K vs 1M)
@@ -83,14 +89,15 @@
 
 ## Скорость
 
-| Метрика | Значение | Рейтинг |
-|---------|----------|---------|
-| **Output speed** | 45 tokens/sec | #103 / 136 |
-| **Time to first token** | varies | slower than average |
+| Метрика                 | Значение      | Рейтинг             |
+| ----------------------- | ------------- | ------------------- |
+| **Output speed**        | 45 tokens/sec | #103 / 136          |
+| **Time to first token** | varies        | slower than average |
 
 **Проблема:** Это одна из моих слабостей. Я **медленный** относительно других моделей. 45 tokens/sec — это медленно.
 
 **Сравнение:**
+
 - Anthropic models: ~80-100 tokens/sec
 - GPT-4o: ~60-80 tokens/sec
 - Я: 45 tokens/sec
@@ -102,12 +109,15 @@
 ## Agentic Capabilities (важнейшая фича)
 
 ### Native Tool Use
+
 - Функции вызываются нативно
 - `thinking` / `reasoning_details` поле — рассуждение между вызовами
 - Interleaved Thinking — думаю между каждым tool call
 
 ### Что это значит для меня:
+
 Я могу:
+
 1. Вызвать tool (exec, read, write, web_search...)
 2. Получить результат
 3. "Подумать" над результатом
@@ -115,9 +125,11 @@
 5. Повторять до решения
 
 ### Self-Evolution (рекурсивное улучшение)
+
 **M2.7 — первая модель которая участвовала в создании себя.**
 
 Процесс:
+
 1. M2.7 построил research agent harness
 2. Этот harness помогал RL команде MiniMax
 3. Агент: запускал эксперименты, анализировал логи, фиксил баги, делал MR
@@ -129,31 +141,36 @@
 
 ## Сравнение с M2 (предыдущая версия)
 
-| Характеристика | M2 | M2.7 |
-|---------------|-----|------|
-| Context | 128K | 204.8K |
-| Expert params | 10B | ~13B (estimate) |
-| Coding benchmark | 95% | 56% (SWE-Pro) — разные метрики |
-| Agentic | Good | Excellent |
-| Self-evolution | No | Yes |
+| Характеристика   | M2   | M2.7                           |
+| ---------------- | ---- | ------------------------------ |
+| Context          | 128K | 204.8K                         |
+| Expert params    | 10B  | ~13B (estimate)                |
+| Coding benchmark | 95%  | 56% (SWE-Pro) — разные метрики |
+| Agentic          | Good | Excellent                      |
+| Self-evolution   | No   | Yes                            |
 
 ---
 
 ## Реальные ограничения
 
 ### 1. Speed (критично для agentic)
+
 45 tokens/sec — медленнее большинства. Это плата за высокое качество.
 
 ### 2. Context window
+
 204.8K — меньше чем Claude (1M). Для длинных документов это минус.
 
 ### 3. Multimodal
+
 Только текст. Не вижу изображения, не работаю с файлами напрямую.
 
 ### 4. Memory между запросами
+
 Каждый запрос — с нуля. Контекст в памяти только текущей сессии. Долгосрочная память — через внешние системы (файлы, Qdrant).
 
 ### 5. Token efficiency
+
 Очень **verbose** — генерирую 87M tokens на Intelligence Index (среднее 20M). Склонность к длинным ответам.
 
 ---
@@ -161,6 +178,7 @@
 ## Что это значит для моей работы
 
 ### Мои сильные стороны:
+
 1. **Agentic loops** — благодаря native tool use и interleaved thinking
 2. **Coding** — SWE-Pro 56.22%, близко к Opus level
 3. **Cost efficiency** — $0.30/$1.20 per 1M, в 10x дешевле Claude
@@ -168,6 +186,7 @@
 5. **Self-improvement** — умею улучшать свои процессы
 
 ### Мои слабые стороны:
+
 1. **Speed** — медленный, не для real-time чатов
 2. **Context** — 204K достаточно для большинства, но не для всего
 3. **Multimodal** — только текст
@@ -198,12 +217,12 @@
 
 Если интересно где я по бенчмаркам:
 
-| Категория | Моё место | Комментарий |
-|-----------|-----------|-------------|
-| Intelligence (AA Index) | #1 / 136 | Лучший на момент release |
-| Coding (SWE-Pro) | 56.22% | Близко к Opus |
-| Agentic (GDPval-AA) | 1495 | Лучший среди open-source |
-| Speed | #103 / 136 | Медленный |
+| Категория               | Моё место  | Комментарий              |
+| ----------------------- | ---------- | ------------------------ |
+| Intelligence (AA Index) | #1 / 136   | Лучший на момент release |
+| Coding (SWE-Pro)        | 56.22%     | Близко к Opus            |
+| Agentic (GDPval-AA)     | 1495       | Лучший среди open-source |
+| Speed                   | #103 / 136 | Медленный                |
 
 ---
 

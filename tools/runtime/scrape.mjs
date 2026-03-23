@@ -4,8 +4,8 @@
  * Better output formatting, multiple selectors, data extraction
  */
 
-import { load } from 'cheerio';
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
+import { load } from "cheerio";
 
 const args = process.argv.slice(2);
 
@@ -52,14 +52,14 @@ if (args.length < 2) {
   process.exit(1);
 }
 
-const [source, selector, operation = 'text'] = args;
+const [source, selector, operation = "text"] = args;
 
 let html;
-let isUrl = source.startsWith('http://') || source.startsWith('https://');
+let isUrl = source.startsWith("http://") || source.startsWith("https://");
 
 if (isUrl) {
   try {
-    if (!operation || operation === 'help') {
+    if (!operation || operation === "help") {
       console.log(`Fetching ${source}...`);
     }
     const response = await fetch(source);
@@ -73,7 +73,7 @@ if (isUrl) {
   }
 } else {
   try {
-    html = readFileSync(source, 'utf-8');
+    html = readFileSync(source, "utf-8");
   } catch (e) {
     console.error(`File error: ${e.message}`);
     process.exit(1);
@@ -83,11 +83,11 @@ if (isUrl) {
 const $ = load(html);
 
 // JSON extraction
-if (selector.startsWith('{')) {
+if (selector.startsWith("{")) {
   try {
     const json = JSON.parse(html);
     // Simple JSONPath: {key.subkey} or {array[index].key}
-    const path = selector.slice(1, -1).split('.').filter(Boolean);
+    const path = selector.slice(1, -1).split(".").filter(Boolean);
     let result = json;
     for (const segment of path) {
       // Check for array index
@@ -100,7 +100,7 @@ if (selector.startsWith('{')) {
     }
     console.log(JSON.stringify(result, null, 2));
   } catch (e) {
-    console.error('JSON parse/path error:', e.message);
+    console.error("JSON parse/path error:", e.message);
   }
   process.exit(0);
 }
@@ -108,26 +108,26 @@ if (selector.startsWith('{')) {
 // Selector operations
 const count = $(selector).length;
 
-if (operation === 'count') {
+if (operation === "count") {
   console.log(count);
   process.exit(0);
 }
 
-if (operation === 'dump') {
+if (operation === "dump") {
   $(selector).each((i, el) => {
     console.log(`--- Element ${i + 1} ---`);
     console.log($.html(el));
-    console.log('');
+    console.log("");
   });
   process.exit(0);
 }
 
-if (operation === 'first') {
+if (operation === "first") {
   const el = $(selector).first();
   if (el.length === 0) {
-    console.log('(no match)');
-  } else if (el.is('img, script, iframe, source, input')) {
-    console.log(el.attr('src') || el.attr('href') || '');
+    console.log("(no match)");
+  } else if (el.is("img, script, iframe, source, input")) {
+    console.log(el.attr("src") || el.attr("href") || "");
   } else {
     console.log(el.text().trim());
   }
@@ -136,48 +136,48 @@ if (operation === 'first') {
 
 // Default: show all matches
 if (count === 0) {
-  console.log('(no matches)');
+  console.log("(no matches)");
   process.exit(0);
 }
 
 if (count === 1) {
   const el = $(selector);
-  if (operation === 'html') {
-    console.log(el.html() || '');
-  } else if (operation === 'outer') {
-    console.log($.html(el) || '');
-  } else if (operation === 'text') {
+  if (operation === "html") {
+    console.log(el.html() || "");
+  } else if (operation === "outer") {
+    console.log($.html(el) || "");
+  } else if (operation === "text") {
     console.log(el.text().trim());
   } else {
-    console.log(el.attr(operation) || '');
+    console.log(el.attr(operation) || "");
   }
 } else {
   // Multiple matches
   const elements = $(selector);
-  
+
   console.log(`\x1b[36m${count} matches\x1b[0m\n`);
-  
-  if (operation === 'html') {
+
+  if (operation === "html") {
     elements.each((i, el) => {
-      const content = $(el).html() || '';
-      if (content.includes('\n') || content.length > 100) {
+      const content = $(el).html() || "";
+      if (content.includes("\n") || content.length > 100) {
         console.log(`--- ${i + 1} ---`);
         console.log(content);
       } else {
         console.log(`${i + 1}. ${content}`);
       }
     });
-  } else if (operation === 'outer') {
+  } else if (operation === "outer") {
     elements.each((i, el) => {
       console.log(`--- ${i + 1} ---`);
       console.log($.html(el));
     });
-  } else if (operation === 'text') {
+  } else if (operation === "text") {
     elements.each((i, el) => {
       const text = $(el).text().trim();
       if (text) {
         // If text is multiline or long, format it
-        if (text.includes('\n') || text.length > 80) {
+        if (text.includes("\n") || text.length > 80) {
           console.log(`--- ${i + 1} ---`);
           console.log(text);
         } else {

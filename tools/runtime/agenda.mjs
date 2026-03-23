@@ -8,21 +8,21 @@
  * Usage: agenda.mjs <command> [args]
  */
 
-import Database from 'better-sqlite3';
-import { existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import Database from "better-sqlite3";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const WORKSPACE = join(__dirname, '..', '..');
-const DB_PATH = join(WORKSPACE, 'data', 'snail.db');
+const WORKSPACE = join(__dirname, "..", "..");
+const DB_PATH = join(WORKSPACE, "data", "snail.db");
 
-if (!existsSync(join(WORKSPACE, 'data'))) {
-  mkdirSync(join(WORKSPACE, 'data'), { recursive: true });
+if (!existsSync(join(WORKSPACE, "data"))) {
+  mkdirSync(join(WORKSPACE, "data"), { recursive: true });
 }
 
 const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL');
+db.pragma("journal_mode = WAL");
 
 // Ensure agenda tables exist (extends existing db schema)
 db.exec(`
@@ -58,20 +58,26 @@ db.exec(`
 const args = process.argv.slice(2);
 const cmd = args[0];
 
-const PRIORITY_LABEL = { 1: 'low', 2: 'normal', 3: 'high', 4: 'urgent', 5: 'critical' };
-const PRIORITY_COLOR = { 1: '\x1b[90m', 2: '', 3: '\x1b[33m', 4: '\x1b[31m', 5: '\x1b[35m' };
-const STATUS_ICON = { todo: '○', doing: '◉', done: '✓', blocked: '✗', cancelled: '—' };
-const STATUS_COLOR = { todo: '', doing: '\x1b[36m', done: '\x1b[32m', blocked: '\x1b[31m', cancelled: '\x1b[90m' };
+const PRIORITY_LABEL = { 1: "low", 2: "normal", 3: "high", 4: "urgent", 5: "critical" };
+const PRIORITY_COLOR = { 1: "\x1b[90m", 2: "", 3: "\x1b[33m", 4: "\x1b[31m", 5: "\x1b[35m" };
+const STATUS_ICON = { todo: "○", doing: "◉", done: "✓", blocked: "✗", cancelled: "—" };
+const STATUS_COLOR = {
+  todo: "",
+  doing: "\x1b[36m",
+  done: "\x1b[32m",
+  blocked: "\x1b[31m",
+  cancelled: "\x1b[90m",
+};
 
 function fmtTask(t, compact = false) {
-  const pc = PRIORITY_COLOR[t.priority] || '';
-  const sc = STATUS_COLOR[t.status] || '';
-  const reset = '\x1b[0m';
-  const icon = STATUS_ICON[t.status] || '•';
-  const pLabel = PRIORITY_LABEL[t.priority] || '';
-  const proj = t.project ? `\x1b[90m[${t.project}]\x1b[0m ` : '';
-  const due = t.due_date ? ` \x1b[90mdue:${t.due_date}\x1b[0m` : '';
-  const tags = t.tags ? ` \x1b[90m#${t.tags.split(',').join(' #')}\x1b[0m` : '';
+  const pc = PRIORITY_COLOR[t.priority] || "";
+  const sc = STATUS_COLOR[t.status] || "";
+  const reset = "\x1b[0m";
+  const icon = STATUS_ICON[t.status] || "•";
+  const pLabel = PRIORITY_LABEL[t.priority] || "";
+  const proj = t.project ? `\x1b[90m[${t.project}]\x1b[0m ` : "";
+  const due = t.due_date ? ` \x1b[90mdue:${t.due_date}\x1b[0m` : "";
+  const tags = t.tags ? ` \x1b[90m#${t.tags.split(",").join(" #")}\x1b[0m` : "";
 
   if (compact) {
     return `${sc}${icon}${reset} #${t.id} ${proj}${t.title}${due}${tags}`;
@@ -80,10 +86,10 @@ function fmtTask(t, compact = false) {
 }
 
 function now() {
-  return new Date().toISOString().replace('T', ' ').slice(0, 19);
+  return new Date().toISOString().replace("T", " ").slice(0, 19);
 }
 
-if (!cmd || cmd === 'help' || cmd === '--help') {
+if (!cmd || cmd === "help" || cmd === "--help") {
   console.log(`
 \x1b[1m📋 Agenda — Task & Project Manager\x1b[0m
 
@@ -133,9 +139,9 @@ const flags = {};
 const positional = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
-  if (a.startsWith('--') && args[i + 1] && !args[i + 1].startsWith('--')) {
+  if (a.startsWith("--") && args[i + 1] && !args[i + 1].startsWith("--")) {
     flags[a.slice(2)] = args[++i];
-  } else if (a.startsWith('--')) {
+  } else if (a.startsWith("--")) {
     flags[a.slice(2)] = true;
   } else {
     positional.push(a);
@@ -146,228 +152,353 @@ const [command, ...rest] = positional;
 
 try {
   switch (command) {
-    case 'add': {
-      const title = rest.join(' ');
-      if (!title) { console.error('Usage: agenda add <title> [flags]'); process.exit(1); }
+    case "add": {
+      const title = rest.join(" ");
+      if (!title) {
+        console.error("Usage: agenda add <title> [flags]");
+        process.exit(1);
+      }
       const priority = parseInt(flags.priority) || 2;
-      const result = db.prepare(`
+      const result = db
+        .prepare(`
         INSERT INTO agenda_tasks (title, description, project, priority, tags, due_date)
         VALUES (?, ?, ?, ?, ?, ?)
-      `).run(title, flags.desc || null, flags.proj || null, priority, flags.tags || null, flags.due || null);
+      `)
+        .run(
+          title,
+          flags.desc || null,
+          flags.proj || null,
+          priority,
+          flags.tags || null,
+          flags.due || null,
+        );
       console.log(`\x1b[32m✓\x1b[0m Added task #${result.lastInsertRowid}: ${title}`);
       break;
     }
 
-    case 'done': {
+    case "done": {
       const id = parseInt(rest[0]);
-      if (!id) { console.error('Usage: agenda done <id>'); process.exit(1); }
-      const r = db.prepare(`UPDATE agenda_tasks SET status='done', completed_at=?, updated_at=? WHERE id=?`).run(now(), now(), id);
+      if (!id) {
+        console.error("Usage: agenda done <id>");
+        process.exit(1);
+      }
+      const r = db
+        .prepare(`UPDATE agenda_tasks SET status='done', completed_at=?, updated_at=? WHERE id=?`)
+        .run(now(), now(), id);
       if (r.changes > 0) console.log(`\x1b[32m✓\x1b[0m Task #${id} done`);
       else console.log(`Not found: #${id}`);
       break;
     }
 
-    case 'start': {
+    case "start": {
       const id = parseInt(rest[0]);
-      if (!id) { console.error('Usage: agenda start <id>'); process.exit(1); }
-      const r = db.prepare(`UPDATE agenda_tasks SET status='doing', updated_at=? WHERE id=?`).run(now(), id);
+      if (!id) {
+        console.error("Usage: agenda start <id>");
+        process.exit(1);
+      }
+      const r = db
+        .prepare(`UPDATE agenda_tasks SET status='doing', updated_at=? WHERE id=?`)
+        .run(now(), id);
       if (r.changes > 0) console.log(`\x1b[36m◉\x1b[0m Task #${id} in progress`);
       else console.log(`Not found: #${id}`);
       break;
     }
 
-    case 'block': {
+    case "block": {
       const id = parseInt(rest[0]);
-      const reason = rest.slice(1).join(' ');
-      if (!id) { console.error('Usage: agenda block <id> [reason]'); process.exit(1); }
+      const reason = rest.slice(1).join(" ");
+      if (!id) {
+        console.error("Usage: agenda block <id> [reason]");
+        process.exit(1);
+      }
       const task = db.prepare(`SELECT * FROM agenda_tasks WHERE id=?`).get(id);
-      if (!task) { console.log(`Not found: #${id}`); break; }
-      const desc = reason ? `[BLOCKED: ${reason}] ${task.description || ''}` : task.description;
-      db.prepare(`UPDATE agenda_tasks SET status='blocked', description=?, updated_at=? WHERE id=?`).run(desc, now(), id);
-      console.log(`\x1b[31m✗\x1b[0m Task #${id} blocked${reason ? ': ' + reason : ''}`);
+      if (!task) {
+        console.log(`Not found: #${id}`);
+        break;
+      }
+      const desc = reason ? `[BLOCKED: ${reason}] ${task.description || ""}` : task.description;
+      db.prepare(
+        `UPDATE agenda_tasks SET status='blocked', description=?, updated_at=? WHERE id=?`,
+      ).run(desc, now(), id);
+      console.log(`\x1b[31m✗\x1b[0m Task #${id} blocked${reason ? ": " + reason : ""}`);
       break;
     }
 
-    case 'cancel': {
+    case "cancel": {
       const id = parseInt(rest[0]);
-      if (!id) { console.error('Usage: agenda cancel <id>'); process.exit(1); }
-      const r = db.prepare(`UPDATE agenda_tasks SET status='cancelled', updated_at=? WHERE id=?`).run(now(), id);
+      if (!id) {
+        console.error("Usage: agenda cancel <id>");
+        process.exit(1);
+      }
+      const r = db
+        .prepare(`UPDATE agenda_tasks SET status='cancelled', updated_at=? WHERE id=?`)
+        .run(now(), id);
       if (r.changes > 0) console.log(`\x1b[90m—\x1b[0m Task #${id} cancelled`);
       else console.log(`Not found: #${id}`);
       break;
     }
 
-    case 'del':
-    case 'delete': {
+    case "del":
+    case "delete": {
       const id = parseInt(rest[0]);
-      if (!id) { console.error('Usage: agenda del <id>'); process.exit(1); }
+      if (!id) {
+        console.error("Usage: agenda del <id>");
+        process.exit(1);
+      }
       const r = db.prepare(`DELETE FROM agenda_tasks WHERE id=?`).run(id);
       if (r.changes > 0) console.log(`\x1b[32m✓\x1b[0m Deleted #${id}`);
       else console.log(`Not found: #${id}`);
       break;
     }
 
-    case 'edit': {
+    case "edit": {
       const id = parseInt(rest[0]);
-      if (!id) { console.error('Usage: agenda edit <id> [--title x] [--desc x] ...'); process.exit(1); }
+      if (!id) {
+        console.error("Usage: agenda edit <id> [--title x] [--desc x] ...");
+        process.exit(1);
+      }
       const task = db.prepare(`SELECT * FROM agenda_tasks WHERE id=?`).get(id);
-      if (!task) { console.log(`Not found: #${id}`); break; }
+      if (!task) {
+        console.log(`Not found: #${id}`);
+        break;
+      }
 
       const updates = [];
       const vals = [];
-      if (flags.title) { updates.push('title=?'); vals.push(flags.title); }
-      if (flags.desc) { updates.push('description=?'); vals.push(flags.desc); }
-      if (flags.proj) { updates.push('project=?'); vals.push(flags.proj); }
-      if (flags.priority) { updates.push('priority=?'); vals.push(parseInt(flags.priority)); }
-      if (flags.due) { updates.push('due_date=?'); vals.push(flags.due); }
-      if (flags.tags) { updates.push('tags=?'); vals.push(flags.tags); }
-      if (flags.status) { updates.push('status=?'); vals.push(flags.status); }
+      if (flags.title) {
+        updates.push("title=?");
+        vals.push(flags.title);
+      }
+      if (flags.desc) {
+        updates.push("description=?");
+        vals.push(flags.desc);
+      }
+      if (flags.proj) {
+        updates.push("project=?");
+        vals.push(flags.proj);
+      }
+      if (flags.priority) {
+        updates.push("priority=?");
+        vals.push(parseInt(flags.priority));
+      }
+      if (flags.due) {
+        updates.push("due_date=?");
+        vals.push(flags.due);
+      }
+      if (flags.tags) {
+        updates.push("tags=?");
+        vals.push(flags.tags);
+      }
+      if (flags.status) {
+        updates.push("status=?");
+        vals.push(flags.status);
+      }
 
-      if (updates.length === 0) { console.log('No changes specified. Use --title, --desc, --proj, etc.'); break; }
-      updates.push('updated_at=?');
+      if (updates.length === 0) {
+        console.log("No changes specified. Use --title, --desc, --proj, etc.");
+        break;
+      }
+      updates.push("updated_at=?");
       vals.push(now());
       vals.push(id);
 
-      db.prepare(`UPDATE agenda_tasks SET ${updates.join(', ')} WHERE id=?`).run(...vals);
+      db.prepare(`UPDATE agenda_tasks SET ${updates.join(", ")} WHERE id=?`).run(...vals);
       console.log(`\x1b[32m✓\x1b[0m Updated task #${id}`);
       break;
     }
 
-    case 'show': {
+    case "show": {
       const id = parseInt(rest[0]);
-      if (!id) { console.error('Usage: agenda show <id>'); process.exit(1); }
+      if (!id) {
+        console.error("Usage: agenda show <id>");
+        process.exit(1);
+      }
       const t = db.prepare(`SELECT * FROM agenda_tasks WHERE id=?`).get(id);
-      if (!t) { console.log(`Not found: #${id}`); break; }
+      if (!t) {
+        console.log(`Not found: #${id}`);
+        break;
+      }
       console.log(`\n${fmtTask(t)}`);
       if (t.description) console.log(`\n  ${t.description}`);
       console.log(`\n  Created: ${t.created_at}`);
       if (t.completed_at) console.log(`  Done: ${t.completed_at}`);
-      console.log('');
+      console.log("");
       break;
     }
 
-    case 'list': {
+    case "list": {
       let q = `SELECT * FROM agenda_tasks WHERE 1=1`;
       const vals = [];
 
-      if (flags.status) { q += ` AND status=?`; vals.push(flags.status); }
-      else { q += ` AND status NOT IN ('done','cancelled')`; }
+      if (flags.status) {
+        q += ` AND status=?`;
+        vals.push(flags.status);
+      } else {
+        q += ` AND status NOT IN ('done','cancelled')`;
+      }
 
-      if (flags.proj) { q += ` AND project=?`; vals.push(flags.proj); }
-      if (flags.priority) { q += ` AND priority>=?`; vals.push(parseInt(flags.priority)); }
+      if (flags.proj) {
+        q += ` AND project=?`;
+        vals.push(flags.proj);
+      }
+      if (flags.priority) {
+        q += ` AND priority>=?`;
+        vals.push(parseInt(flags.priority));
+      }
 
       q += ` ORDER BY priority DESC, id`;
 
       const rows = db.prepare(q).all(...vals);
-      if (rows.length === 0) { console.log('(no tasks)'); break; }
+      if (rows.length === 0) {
+        console.log("(no tasks)");
+        break;
+      }
 
       // Group by project
       const byProject = {};
-      rows.forEach(t => {
-        const key = t.project || '(none)';
+      rows.forEach((t) => {
+        const key = t.project || "(none)";
         (byProject[key] = byProject[key] || []).push(t);
       });
 
       Object.entries(byProject).forEach(([proj, tasks]) => {
         console.log(`\n\x1b[33m${proj}\x1b[0m (${tasks.length})`);
-        tasks.forEach(t => console.log('  ' + fmtTask(t)));
+        tasks.forEach((t) => console.log("  " + fmtTask(t)));
       });
       console.log(`\n\x1b[90m${rows.length} task(s)\x1b[0m`);
       break;
     }
 
-    case 'next': {
-      const t = db.prepare(`
+    case "next": {
+      const t = db
+        .prepare(`
         SELECT * FROM agenda_tasks
         WHERE status IN ('todo','doing')
         ORDER BY priority DESC, id
         LIMIT 1
-      `).get();
-      if (!t) { console.log('\x1b[32m✓ Nothing on the agenda\x1b[0m'); break; }
-      console.log('\n\x1b[1mNext task:\x1b[0m\n');
-      console.log('  ' + fmtTask(t));
+      `)
+        .get();
+      if (!t) {
+        console.log("\x1b[32m✓ Nothing on the agenda\x1b[0m");
+        break;
+      }
+      console.log("\n\x1b[1mNext task:\x1b[0m\n");
+      console.log("  " + fmtTask(t));
       if (t.description) console.log(`\n  ${t.description}`);
-      console.log('');
+      console.log("");
       break;
     }
 
-    case 'doing': {
-      const rows = db.prepare(`SELECT * FROM agenda_tasks WHERE status='doing' ORDER BY priority DESC`).all();
-      if (rows.length === 0) { console.log('(nothing in progress)'); break; }
+    case "doing": {
+      const rows = db
+        .prepare(`SELECT * FROM agenda_tasks WHERE status='doing' ORDER BY priority DESC`)
+        .all();
+      if (rows.length === 0) {
+        console.log("(nothing in progress)");
+        break;
+      }
       console.log(`\x1b[36mIn progress (${rows.length}):\x1b[0m\n`);
-      rows.forEach(t => console.log('  ' + fmtTask(t)));
+      rows.forEach((t) => console.log("  " + fmtTask(t)));
       break;
     }
 
-    case 'blocked': {
-      const rows = db.prepare(`SELECT * FROM agenda_tasks WHERE status='blocked' ORDER BY priority DESC`).all();
-      if (rows.length === 0) { console.log('\x1b[32m✓ No blocked tasks\x1b[0m'); break; }
+    case "blocked": {
+      const rows = db
+        .prepare(`SELECT * FROM agenda_tasks WHERE status='blocked' ORDER BY priority DESC`)
+        .all();
+      if (rows.length === 0) {
+        console.log("\x1b[32m✓ No blocked tasks\x1b[0m");
+        break;
+      }
       console.log(`\x1b[31mBlocked (${rows.length}):\x1b[0m\n`);
-      rows.forEach(t => console.log('  ' + fmtTask(t)));
+      rows.forEach((t) => console.log("  " + fmtTask(t)));
       break;
     }
 
-    case 'stats': {
+    case "stats": {
       const total = db.prepare(`SELECT COUNT(*) as c FROM agenda_tasks`).get().c;
-      const byStatus = db.prepare(`SELECT status, COUNT(*) as c FROM agenda_tasks GROUP BY status`).all();
-      const byProject = db.prepare(`
+      const byStatus = db
+        .prepare(`SELECT status, COUNT(*) as c FROM agenda_tasks GROUP BY status`)
+        .all();
+      const byProject = db
+        .prepare(`
         SELECT project, COUNT(*) as total,
                SUM(CASE WHEN status='done' THEN 1 ELSE 0 END) as done
         FROM agenda_tasks GROUP BY project ORDER BY total DESC
-      `).all();
+      `)
+        .all();
 
-      console.log('\n\x1b[1m📊 Agenda Stats\x1b[0m\n');
+      console.log("\n\x1b[1m📊 Agenda Stats\x1b[0m\n");
       console.log(`Total tasks: ${total}\n`);
 
-      console.log('\x1b[33mBy Status:\x1b[0m');
-      byStatus.forEach(s => {
-        const icon = STATUS_ICON[s.status] || '•';
+      console.log("\x1b[33mBy Status:\x1b[0m");
+      byStatus.forEach((s) => {
+        const icon = STATUS_ICON[s.status] || "•";
         console.log(`  ${icon} ${s.status}: ${s.c}`);
       });
 
       if (byProject.length > 0) {
-        console.log('\n\x1b[33mBy Project:\x1b[0m');
-        byProject.forEach(p => {
-          const name = p.project || '(none)';
-          const pct = p.total > 0 ? Math.round(p.done / p.total * 100) : 0;
-          const bar = '█'.repeat(Math.round(pct / 10)) + '░'.repeat(10 - Math.round(pct / 10));
+        console.log("\n\x1b[33mBy Project:\x1b[0m");
+        byProject.forEach((p) => {
+          const name = p.project || "(none)";
+          const pct = p.total > 0 ? Math.round((p.done / p.total) * 100) : 0;
+          const bar = "█".repeat(Math.round(pct / 10)) + "░".repeat(10 - Math.round(pct / 10));
           console.log(`  ${name}: ${p.done}/${p.total} ${bar} ${pct}%`);
         });
       }
-      console.log('');
+      console.log("");
       break;
     }
 
-    case 'project': {
+    case "project": {
       const sub = rest[0];
-      if (!sub || sub === 'list') {
+      if (!sub || sub === "list") {
         const rows = db.prepare(`SELECT * FROM agenda_projects ORDER BY status, name`).all();
-        if (rows.length === 0) { console.log('(no projects)'); break; }
-        console.log('\x1b[33mProjects:\x1b[0m\n');
-        rows.forEach(p => {
-          const sc = p.status === 'done' ? '\x1b[90m' : p.status === 'active' ? '\x1b[32m' : '\x1b[33m';
-          console.log(`  ${sc}${p.name}\x1b[0m [${p.status}]${p.goal ? '\n    Goal: ' + p.goal : ''}`);
+        if (rows.length === 0) {
+          console.log("(no projects)");
+          break;
+        }
+        console.log("\x1b[33mProjects:\x1b[0m\n");
+        rows.forEach((p) => {
+          const sc =
+            p.status === "done" ? "\x1b[90m" : p.status === "active" ? "\x1b[32m" : "\x1b[33m";
+          console.log(
+            `  ${sc}${p.name}\x1b[0m [${p.status}]${p.goal ? "\n    Goal: " + p.goal : ""}`,
+          );
         });
-      } else if (sub === 'add') {
-        const name = rest.slice(1).join(' ') || flags.name;
-        if (!name) { console.error('Usage: agenda project add <name> [--goal text]'); process.exit(1); }
-        const r = db.prepare(`INSERT OR IGNORE INTO agenda_projects (name, goal) VALUES (?, ?)`).run(name, flags.goal || null);
+      } else if (sub === "add") {
+        const name = rest.slice(1).join(" ") || flags.name;
+        if (!name) {
+          console.error("Usage: agenda project add <name> [--goal text]");
+          process.exit(1);
+        }
+        const r = db
+          .prepare(`INSERT OR IGNORE INTO agenda_projects (name, goal) VALUES (?, ?)`)
+          .run(name, flags.goal || null);
         if (r.changes > 0) console.log(`\x1b[32m✓\x1b[0m Project: ${name}`);
         else console.log(`Already exists: ${name}`);
-      } else if (sub === 'done') {
-        const name = rest.slice(1).join(' ');
-        db.prepare(`UPDATE agenda_projects SET status='done', updated_at=? WHERE name=?`).run(now(), name);
+      } else if (sub === "done") {
+        const name = rest.slice(1).join(" ");
+        db.prepare(`UPDATE agenda_projects SET status='done', updated_at=? WHERE name=?`).run(
+          now(),
+          name,
+        );
         console.log(`\x1b[32m✓\x1b[0m Project done: ${name}`);
-      } else if (sub === 'show') {
-        const name = rest.slice(1).join(' ');
+      } else if (sub === "show") {
+        const name = rest.slice(1).join(" ");
         const p = db.prepare(`SELECT * FROM agenda_projects WHERE name=?`).get(name);
-        if (!p) { console.log(`Not found: ${name}`); break; }
-        const tasks = db.prepare(`SELECT * FROM agenda_tasks WHERE project=? ORDER BY priority DESC`).all(name);
+        if (!p) {
+          console.log(`Not found: ${name}`);
+          break;
+        }
+        const tasks = db
+          .prepare(`SELECT * FROM agenda_tasks WHERE project=? ORDER BY priority DESC`)
+          .all(name);
         console.log(`\n\x1b[1m${p.name}\x1b[0m [${p.status}]`);
         if (p.goal) console.log(`Goal: ${p.goal}`);
         console.log(`\nTasks (${tasks.length}):`);
-        tasks.forEach(t => console.log('  ' + fmtTask(t, true)));
-        console.log('');
+        tasks.forEach((t) => console.log("  " + fmtTask(t, true)));
+        console.log("");
       }
       break;
     }

@@ -1,13 +1,13 @@
 /**
  * Deliberate: Parallel Thinking System
- * 
+ *
  * Multiple simultaneous reasoning chains with consensus aggregation.
  * Uses OpenClaw subagents as parallel cognition units.
  */
 
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/core";
 import * as fs from "fs";
 import * as path from "path";
+import type { OpenClawPluginApi } from "openclaw/plugin-sdk/core";
 
 interface PersonaConfig {
   id: string;
@@ -167,16 +167,16 @@ export class DeliberateSystem {
   private config: DeliberateConfig;
   private sessionDir: string;
   private resultsDir: string;
-  
+
   constructor(api: OpenClawPluginApi, workspaceDir: string) {
     this.api = api;
     this.config = { ...DEFAULT_CONFIG };
     this.sessionDir = path.join(workspaceDir, "COGNEXUS", "DELIBERATE", "sessions");
     this.resultsDir = path.join(workspaceDir, "COGNEXUS", "DELIBERATE", "results");
-    
+
     this.ensureDirectories();
   }
-  
+
   private ensureDirectories(): void {
     for (const dir of [this.sessionDir, this.resultsDir]) {
       if (!fs.existsSync(dir)) {
@@ -184,7 +184,7 @@ export class DeliberateSystem {
       }
     }
   }
-  
+
   private loadConfig(): void {
     const configPath = path.join(this.sessionDir, "..", "CONFIG", "deliberate.json");
     try {
@@ -193,17 +193,18 @@ export class DeliberateSystem {
         this.config = {
           ...DEFAULT_CONFIG,
           ...loaded,
-          personas: loaded.personas?.map((p: PersonaConfig) => {
-            const defaultP = DEFAULT_PERSONAS.find(dp => dp.id === p.id);
-            return defaultP ? { ...defaultP, ...p } : p;
-          }) ?? DEFAULT_PERSONAS,
+          personas:
+            loaded.personas?.map((p: PersonaConfig) => {
+              const defaultP = DEFAULT_PERSONAS.find((dp) => dp.id === p.id);
+              return defaultP ? { ...defaultP, ...p } : p;
+            }) ?? DEFAULT_PERSONAS,
         };
       }
     } catch (e) {
       this.api.runtime?.logger?.warn?.("Failed to load Deliberate config, using defaults");
     }
   }
-  
+
   private saveConfig(): void {
     const configPath = path.join(this.sessionDir, "..", "CONFIG", "deliberate.json");
     const dir = path.dirname(configPath);
@@ -212,54 +213,51 @@ export class DeliberateSystem {
     }
     fs.writeFileSync(configPath, JSON.stringify(this.config, null, 2));
   }
-  
+
   // ===========================================================================
   // Run parallel thinking
   // ===========================================================================
-  
-  async think(
-    prompt: string,
-    context?: string
-  ): Promise<ConsensusResult> {
+
+  async think(prompt: string, context?: string): Promise<ConsensusResult> {
     this.loadConfig();
-    
+
     if (!this.config.enabled) {
       return this.fallbackResponse("Deliberate is disabled");
     }
-    
-    const enabledPersonas = this.config.personas.filter(p => p.enabled);
-    
+
+    const enabledPersonas = this.config.personas.filter((p) => p.enabled);
+
     if (enabledPersonas.length === 0) {
       return this.fallbackResponse("No personas enabled");
     }
-    
+
     const startTime = Date.now();
-    
+
     // Run all personas in parallel
     const results = await Promise.all(
-      enabledPersonas.map(persona => this.runPersona(prompt, persona, context))
+      enabledPersonas.map((persona) => this.runPersona(prompt, persona, context)),
     );
-    
+
     const elapsed = Date.now() - startTime;
     this.api.runtime?.logger?.info?.(
-      `Deliberate: ${results.length} personas completed in ${elapsed}ms`
+      `Deliberate: ${results.length} personas completed in ${elapsed}ms`,
     );
-    
+
     // Aggregate results
     return this.aggregateResults(results, prompt);
   }
-  
+
   // ===========================================================================
   // Run single persona as subagent
   // ===========================================================================
-  
+
   private async runPersona(
     prompt: string,
     persona: PersonaConfig,
-    context?: string
+    context?: string,
   ): Promise<ThinkingResult> {
     const sessionId = `deliberate-${persona.id}-${Date.now()}`;
-    
+
     const personaPrompt = `${persona.prompt}
 
 ${context ? `\n\n## Context\n${context}\n` : ""}
@@ -297,11 +295,11 @@ Provide your response in this exact format:
         message: personaPrompt,
         deliver: false,
       });
-      
+
       // Parse result
       const response = result?.message ?? result?.text ?? "";
       const { keyPoints, concerns, confidence } = this.parsePersonaOutput(response);
-      
+
       return {
         persona: persona.id,
         response: this.extractResponse(response),
@@ -322,11 +320,11 @@ Provide your response in this exact format:
       };
     }
   }
-  
+
   // ===========================================================================
   // Parse persona output
   // ===========================================================================
-  
+
   private parsePersonaOutput(output: string): {
     keyPoints: string[];
     concerns: string[];
@@ -334,86 +332,86 @@ Provide your response in this exact format:
   } {
     const keyPoints = this.extractListItems(output, "Key Points");
     const concerns = this.extractListItems(output, "Concerns");
-    
+
     // Extract confidence
     let confidence = 0.5;
     const confMatch = output.match(/Confidence[\s\n]+([\d.]+)/i);
     if (confMatch) {
       confidence = parseFloat(confMatch[1]);
     }
-    
+
     return { keyPoints, concerns, confidence };
   }
-  
+
   private extractSection(text: string, section: string): string {
     const pattern = new RegExp(`###\\s+${section}\\s*\\n([\\s\\S]*?)(?=###\\s+\\w+|$$)`, "i");
     const match = text.match(pattern);
     return match ? match[1].trim() : "";
   }
-  
+
   private extractListItems(text: string, section: string): string[] {
-    const sectionPattern = new RegExp(`###\\s+${section}\\s*\\n([\\s\\S]*?)(?=###\\s+\\w+|$$)`, "i");
+    const sectionPattern = new RegExp(
+      `###\\s+${section}\\s*\\n([\\s\\S]*?)(?=###\\s+\\w+|$$)`,
+      "i",
+    );
     const sectionMatch = text.match(sectionPattern);
-    
+
     if (!sectionMatch) return [];
-    
+
     const items: string[] = [];
     const listPattern = /-\s+(.+)/g;
     let match;
-    
+
     while ((match = listPattern.exec(sectionMatch[1])) !== null) {
       items.push(match[1].trim());
     }
-    
+
     return items;
   }
-  
+
   private extractResponse(text: string): string {
     const pattern = /###\s+Response\s*\n([\s\S]*?)(?=$$)/i;
     const match = text.match(pattern);
     return match ? match[1].trim() : text.slice(0, 500);
   }
-  
+
   // ===========================================================================
   // Aggregate results into consensus
   // ===========================================================================
-  
-  private aggregateResults(
-    results: ThinkingResult[],
-    originalPrompt: string
-  ): ConsensusResult {
+
+  private aggregateResults(results: ThinkingResult[], originalPrompt: string): ConsensusResult {
     // Filter out empty responses
-    const validResults = results.filter(r => r.response.length > 0);
-    
+    const validResults = results.filter((r) => r.response.length > 0);
+
     if (validResults.length === 0) {
       return this.fallbackResponse("No personas provided valid responses");
     }
-    
+
     // Calculate weighted confidence
     let totalWeight = 0;
     let weightedConfidence = 0;
-    
+
     for (const result of validResults) {
-      const persona = this.config.personas.find(p => p.id === result.persona);
+      const persona = this.config.personas.find((p) => p.id === result.persona);
       const weight = persona?.weight ?? 1.0;
       weightedConfidence += result.confidence * weight;
       totalWeight += weight;
     }
-    
+
     const avgConfidence = weightedConfidence / totalWeight;
-    
+
     // Find agreed and contested points
-    const allPoints = validResults.flatMap(r => r.keyPoints);
+    const allPoints = validResults.flatMap((r) => r.keyPoints);
     const pointFrequency = new Map<string, number>();
-    
+
     for (const point of allPoints) {
       const normalized = point.toLowerCase().trim();
       pointFrequency.set(normalized, (pointFrequency.get(normalized) ?? 0) + 1);
     }
-    
+
     const agreedPoints: string[] = [];
     const contestedPoints: string[] = [];
-    
+
     for (const [point, freq] of pointFrequency) {
       const ratio = freq / validResults.length;
       if (ratio >= this.config.consensusThreshold) {
@@ -422,17 +420,14 @@ Provide your response in this exact format:
         contestedPoints.push(point);
       }
     }
-    
+
     // Calculate consensus score
-    const consensusScore = agreedPoints.length > 0
-      ? Math.min(1, agreedPoints.length / (validResults.length * 0.5))
-      : 0;
-    
+    const consensusScore =
+      agreedPoints.length > 0 ? Math.min(1, agreedPoints.length / (validResults.length * 0.5)) : 0;
+
     // Calculate dissent level
-    const dissentLevel = contestedPoints.length > 0
-      ? contestedPoints.length / allPoints.length
-      : 0;
-    
+    const dissentLevel = contestedPoints.length > 0 ? contestedPoints.length / allPoints.length : 0;
+
     // Determine confidence level
     let confidenceLevel: "high" | "medium" | "low";
     if (avgConfidence >= 0.7) {
@@ -442,20 +437,20 @@ Provide your response in this exact format:
     } else {
       confidenceLevel = "low";
     }
-    
+
     // Find winner (highest confidence)
     const winnerResult = validResults.reduce((best, current) =>
-      current.confidence > best.confidence ? current : best
+      current.confidence > best.confidence ? current : best,
     );
-    
+
     // Synthesize response
     const synthesizedResponse = this.synthesize(
       validResults,
       agreedPoints,
       contestedPoints,
-      originalPrompt
+      originalPrompt,
     );
-    
+
     // Log results
     this.logResults({
       prompt: originalPrompt,
@@ -470,7 +465,7 @@ Provide your response in this exact format:
         winner: winnerResult.persona,
       },
     });
-    
+
     return {
       synthesizedResponse,
       consensusScore,
@@ -481,24 +476,24 @@ Provide your response in this exact format:
       winner: winnerResult.persona,
     };
   }
-  
+
   // ===========================================================================
   // Synthesize final response
   // ===========================================================================
-  
+
   private synthesize(
     results: ThinkingResult[],
     agreedPoints: string[],
     contestedPoints: string[],
-    originalPrompt: string
+    originalPrompt: string,
   ): string {
     // Sort by confidence
     const sorted = [...results].sort((a, b) => b.confidence - a.confidence);
-    
+
     // Build synthesis
     let synthesis = `# Deliberate Synthesis\n\n`;
     synthesis += `## Response to: "${originalPrompt}"\n\n`;
-    
+
     // Agreement section
     if (agreedPoints.length > 0) {
       synthesis += `## Points of Agreement\n`;
@@ -507,7 +502,7 @@ Provide your response in this exact format:
       }
       synthesis += `\n`;
     }
-    
+
     // Contested points
     if (contestedPoints.length > 0) {
       synthesis += `## Points of Contention\n`;
@@ -516,19 +511,19 @@ Provide your response in this exact format:
       }
       synthesis += `\n`;
     }
-    
+
     // Main synthesis from highest confidence
     synthesis += `## Synthesized View\n\n`;
     synthesis += `${sorted[0].response}\n\n`;
-    
+
     // Add insights from others if significantly different
     if (sorted.length > 1 && sorted[1].confidence > 0.4) {
       synthesis += `### Additional Perspectives\n\n`;
       synthesis += `**${sorted[1].persona}** adds: ${sorted[1].response.slice(0, 300)}...\n\n`;
     }
-    
+
     // Concerns summary
-    const allConcerns = results.flatMap(r => r.concerns);
+    const allConcerns = results.flatMap((r) => r.concerns);
     if (allConcerns.length > 0) {
       synthesis += `## Key Concerns to Address\n`;
       const uniqueConcerns = [...new Set(allConcerns)].slice(0, 5);
@@ -536,14 +531,14 @@ Provide your response in this exact format:
         synthesis += `- ${concern}\n`;
       }
     }
-    
+
     return synthesis;
   }
-  
+
   // ===========================================================================
   // Fallback
   // ===========================================================================
-  
+
   private fallbackResponse(reason: string): ConsensusResult {
     return {
       synthesizedResponse: `[Deliberate skipped: ${reason}]`,
@@ -554,26 +549,26 @@ Provide your response in this exact format:
       confidenceLevel: "low",
     };
   }
-  
+
   // ===========================================================================
   // Logging
   // ===========================================================================
-  
+
   private logResults(data: {
     prompt: string;
     results: ThinkingResult[];
     consensus: ConsensusResult;
   }): void {
     const logFile = path.join(this.resultsDir, `deliberation-${Date.now()}.json`);
-    
+
     try {
       fs.writeFileSync(logFile, JSON.stringify(data, null, 2));
-      
+
       // Also append to summary
       const summaryFile = path.join(this.resultsDir, "summary.jsonl");
       const summary = {
         timestamp: new Date().toISOString(),
-        personas: data.results.map(r => r.persona),
+        personas: data.results.map((r) => r.persona),
         consensusScore: data.consensus.consensusScore,
         confidence: data.consensus.confidenceLevel,
         winner: data.consensus.winner,
@@ -583,24 +578,24 @@ Provide your response in this exact format:
       this.api.runtime?.logger?.error?.("Failed to log Deliberate results", e);
     }
   }
-  
+
   // ===========================================================================
   // Configuration
   // ===========================================================================
-  
+
   setEnabled(enabled: boolean): void {
     this.config.enabled = enabled;
     this.saveConfig();
   }
-  
+
   setPersonaEnabled(personaId: string, enabled: boolean): void {
-    const persona = this.config.personas.find(p => p.id === personaId);
+    const persona = this.config.personas.find((p) => p.id === personaId);
     if (persona) {
       persona.enabled = enabled;
       this.saveConfig();
     }
   }
-  
+
   getConfig(): DeliberateConfig {
     this.loadConfig();
     return { ...this.config };
@@ -614,13 +609,13 @@ Provide your response in this exact format:
 export default function registerDeliberate(api: OpenClawPluginApi): void {
   const workspaceDir = api.config.agents?.defaults?.workspace ?? "~/.openclaw/workspace";
   const resolvedWorkspace = workspaceDir.replace(/^~/, process.env.HOME ?? "");
-  
+
   const deliberate = new DeliberateSystem(api, resolvedWorkspace);
-  
+
   // Register deliberation hook
   api.registerHook("before_agent_start", async (params) => {
     const message = params.messages?.[params.messages.length - 1]?.content ?? "";
-    
+
     // Check if we should run deliberate
     if (
       message.startsWith("!deliberate") ||
@@ -631,9 +626,9 @@ export default function registerDeliberate(api: OpenClawPluginApi): void {
         .replace(/^!(?:deliberate|think)/, "")
         .replace(/##deliberate/, "")
         .trim();
-      
+
       const result = await deliberate.think(actualPrompt);
-      
+
       // Return deliberation result instead of normal processing
       return {
         override: true,
@@ -645,10 +640,10 @@ export default function registerDeliberate(api: OpenClawPluginApi): void {
         },
       };
     }
-    
+
     return null;
   });
-  
+
   api.runtime?.logger?.info?.("Deliberate parallel thinking system registered");
 }
 
@@ -663,7 +658,7 @@ export function extractInsights(results: ThinkingResult[]): {
 } {
   const innovativeIdeas: string[] = [];
   const riskFactors: string[] = [];
-  
+
   for (const result of results) {
     if (result.persona === "explorer") {
       innovativeIdeas.push(...result.keyPoints.slice(0, 2));
@@ -672,13 +667,14 @@ export function extractInsights(results: ThinkingResult[]): {
       riskFactors.push(...result.concerns.slice(0, 2));
     }
   }
-  
+
   const avgConfidence = results.reduce((s, r) => s + r.confidence, 0) / results.length;
-  const consensusSummary = avgConfidence > 0.7
-    ? "High consensus across perspectives"
-    : avgConfidence > 0.4
-    ? "Moderate consensus, some divergence"
-    : "Low consensus, significant divergence";
-  
+  const consensusSummary =
+    avgConfidence > 0.7
+      ? "High consensus across perspectives"
+      : avgConfidence > 0.4
+        ? "Moderate consensus, some divergence"
+        : "Low consensus, significant divergence";
+
   return { innovativeIdeas, riskFactors, consensusSummary };
 }

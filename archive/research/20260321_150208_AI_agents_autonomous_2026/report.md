@@ -1,5 +1,6 @@
 # Research: AI agents autonomous 2026
-*Started: Sat Mar 21 15:02:08 UTC 2026*
+
+_Started: Sat Mar 21 15:02:08 UTC 2026_
 
 ## What are the main aspects and current state of AI agents autonomous 2026?
 
@@ -31,7 +32,8 @@
 - [2026 Agentic AI Trends: Expert Insights on Autonomous Systems](https://acuvate.com/blog/2026-agentic-ai-expert-predictions/) — brave
 - [DOES Definition & Meaning | Dictionary.com](https://www.dictionary.com/browse/does) — bing
 
-*Iteration 1 complete: Sat Mar 21 15:02:13 UTC 2026*
+_Iteration 1 complete: Sat Mar 21 15:02:13 UTC 2026_
+
 ## What are the main aspects and current state of AI agents autonomous 2026?
 
 - [Stolpespade 146 cm | Hard Head | Jula](https://www.jula.no/catalog/hage/hageredskaper/hageverktoy/spader-og-skuffer/stolpespade-027674/) — bing
@@ -62,7 +64,6 @@
 - [DOES Definition & Meaning | Dictionary.com](https://www.dictionary.com/browse/does) — bing
 - [does verb - Definition, pictures, pronunciation and usage notes ...](https://www.oxfordlearnersdictionaries.com/us/definition/english/does) — bing
 
-*Iteration 2 complete: Sat Mar 21 15:02:15 UTC 2026*
+_Iteration 2 complete: Sat Mar 21 15:02:15 UTC 2026_
 
-*Completed: Sat Mar 21 15:02:15 UTC 2026*
-
+_Completed: Sat Mar 21 15:02:15 UTC 2026_

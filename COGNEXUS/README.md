@@ -56,6 +56,7 @@ Replaces the legacy context engine with an AI-native memory system:
 - **Semantic Memory (SM)**: Long-term importance-weighted knowledge
 
 Importance scoring considers:
+
 - Recency (exponential decay)
 - Access frequency
 - Semantic richness
@@ -66,13 +67,13 @@ Importance scoring considers:
 
 Runs 5 simultaneous reasoning agents:
 
-| Persona | Role | Weight |
-|---------|------|--------|
-| Explorer | Creative, what-if scenarios | 1.0 |
-| Analyst | Evidence-based, truth-seeking | 1.2 |
-| Challenger | Devil's advocate, risk identification | 1.0 |
-| Historian | Past patterns and precedent | 0.8 |
-| Ethicist | Moral implications, stakeholder impact | 0.9 |
+| Persona    | Role                                   | Weight |
+| ---------- | -------------------------------------- | ------ |
+| Explorer   | Creative, what-if scenarios            | 1.0    |
+| Analyst    | Evidence-based, truth-seeking          | 1.2    |
+| Challenger | Devil's advocate, risk identification  | 1.0    |
+| Historian  | Past patterns and precedent            | 0.8    |
+| Ethicist   | Moral implications, stakeholder impact | 0.9    |
 
 Consensus aggregation produces confidence scores and highlights disagreements.
 
@@ -87,6 +88,7 @@ Autonomous identity refinement:
 5. **Rollback**: Full git-backed reversal capability
 
 Safety constraints:
+
 - All changes require backup
 - Verification before application
 - Human-in-the-loop for significant changes
@@ -148,17 +150,17 @@ Access the dashboard at `/cognexus/dashboard/`
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/cognexus/status` | GET | System status |
-| `/cognexus/analytics/dashboard` | GET | Overview metrics |
-| `/cognexus/analytics/snapshot` | GET | Current state |
-| `/cognexus/analytics/metrics` | GET | Time-series data |
-| `/cognexus/flow/create` | POST | Create task flow |
-| `/cognexus/flow/status` | GET | Flow status |
-| `/cognexus/flow/execute` | POST | Execute flow |
-| `/cognexus/evolution/status` | GET | Evolution state |
-| `/cognexus/evolution/analyze` | GET | Session analysis |
+| Endpoint                        | Method | Description      |
+| ------------------------------- | ------ | ---------------- |
+| `/cognexus/status`              | GET    | System status    |
+| `/cognexus/analytics/dashboard` | GET    | Overview metrics |
+| `/cognexus/analytics/snapshot`  | GET    | Current state    |
+| `/cognexus/analytics/metrics`   | GET    | Time-series data |
+| `/cognexus/flow/create`         | POST   | Create task flow |
+| `/cognexus/flow/status`         | GET    | Flow status      |
+| `/cognexus/flow/execute`        | POST   | Execute flow     |
+| `/cognexus/evolution/status`    | GET    | Evolution state  |
+| `/cognexus/evolution/analyze`   | GET    | Session analysis |
 
 ---
 
@@ -235,16 +237,19 @@ Edit `COGNEXUS/CONFIG/defaults.json`:
 ## Technical Details
 
 ### Requirements
+
 - OpenClaw 2026.3+
 - Node.js 18+
 - 512MB+ available memory
 
 ### Performance
+
 - Context engine adds ~5-10ms latency to assembly
 - Deliberate adds 2-5 seconds per invocation
 - Analytics: minimal overhead (<1% CPU)
 
 ### Storage
+
 - Working memory: in-memory + JSON file (~1MB max)
 - Episodic: JSON files (~100KB per session)
 - Semantic: Markdown files (~10KB average)
@@ -259,6 +264,7 @@ Edit `COGNEXUS/CONFIG/defaults.json`:
 **Status**: Proof of concept — functional but undergoing active development.
 
 **Roadmap**:
+
 - [ ] Full TypeScript compilation
 - [ ] Unit tests for all components
 - [ ] Integration tests with OpenClaw

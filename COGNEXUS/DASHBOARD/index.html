@@ -1,911 +1,1047 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CogneXus Dashboard</title>
-  <style>
-    :root {
-      --bg-primary: #0d1117;
-      --bg-secondary: #161b22;
-      --bg-tertiary: #21262d;
-      --border: #30363d;
-      --text-primary: #e6edf3;
-      --text-secondary: #8b949e;
-      --text-muted: #6e7681;
-      --accent: #58a6ff;
-      --accent-dim: #1f6feb;
-      --success: #3fb950;
-      --warning: #d29922;
-      --error: #f85149;
-      --purple: #a371f7;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    /* Header */
-    .header {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .header-title h1 {
-      font-size: 20px;
-      font-weight: 600;
-      background: linear-gradient(135deg, var(--accent), var(--purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .header-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--success);
-      animation: pulse 2s infinite;
-    }
-
-    .status-dot.warning { background: var(--warning); }
-    .status-dot.error { background: var(--error); }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    /* Navigation */
-    .nav {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      display: flex;
-      gap: 4px;
-      overflow-x: auto;
-    }
-
-    .nav-tab {
-      padding: 12px 16px;
-      font-size: 14px;
-      color: var(--text-secondary);
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .nav-tab:hover {
-      color: var(--text-primary);
-      background: var(--bg-tertiary);
-    }
-
-    .nav-tab.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    /* Main Content */
-    .main {
-      padding: 24px;
-      max-width: 1600px;
-      margin: 0 auto;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    /* Cards */
-    .card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    /* Metrics Grid */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .metric-card {
-      background: var(--bg-tertiary);
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    .metric-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .metric-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-primary);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .metric-unit {
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--text-secondary);
-      margin-left: 4px;
-    }
-
-    .metric-trend {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-      margin-top: 8px;
-    }
-
-    .metric-trend.up { color: var(--success); }
-    .metric-trend.down { color: var(--error); }
-    .metric-trend.neutral { color: var(--text-muted); }
-
-    /* Progress Bars */
-    .progress-container {
-      margin-bottom: 12px;
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 6px;
-    }
-
-    .progress-bar {
-      height: 8px;
-      background: var(--bg-primary);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .progress-fill.blue { background: linear-gradient(90deg, var(--accent-dim), var(--accent)); }
-    .progress-fill.green { background: var(--success); }
-    .progress-fill.yellow { background: var(--warning); }
-    .progress-fill.red { background: var(--error); }
-    .progress-fill.purple { background: var(--purple); }
-
-    /* Sparkline Chart */
-    .sparkline {
-      height: 40px;
-      margin-top: 8px;
-    }
-
-    .sparkline svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .sparkline-path {
-      fill: none;
-      stroke: var(--accent);
-      stroke-width: 2;
-    }
-
-    .sparkline-area {
-      fill: url(#sparkline-gradient);
-      opacity: 0.3;
-    }
-
-    /* Tables */
-    .table-container {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-
-    th {
-      color: var(--text-muted);
-      font-weight: 500;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    tr:hover td {
-      background: var(--bg-tertiary);
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    .tag.success { background: rgba(63, 185, 80, 0.15); color: var(--success); }
-    .tag.warning { background: rgba(210, 153, 34, 0.15); color: var(--warning); }
-    .tag.error { background: rgba(248, 81, 73, 0.15); color: var(--error); }
-    .tag.info { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
-
-    /* Heatmap */
-    .heatmap {
-      display: grid;
-      grid-template-columns: repeat(24, 1fr);
-      gap: 2px;
-      margin-top: 12px;
-    }
-
-    .heatmap-cell {
-      aspect-ratio: 1;
-      border-radius: 2px;
-      background: var(--bg-tertiary);
-    }
-
-    .heatmap-cell.level-1 { background: rgba(63, 185, 80, 0.2); }
-    .heatmap-cell.level-2 { background: rgba(63, 185, 80, 0.4); }
-    .heatmap-cell.level-3 { background: rgba(63, 185, 80, 0.6); }
-    .heatmap-cell.level-4 { background: rgba(63, 185, 80, 0.8); }
-    .heatmap-cell.level-5 { background: var(--success); }
-
-    /* Flow Diagram */
-    .flow-diagram {
-      background: var(--bg-tertiary);
-      border-radius: 8px;
-      padding: 20px;
-      min-height: 200px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .flow-node {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 13px;
-    }
-
-    .flow-node.pending { border-left: 3px solid var(--text-muted); }
-    .flow-node.running { border-left: 3px solid var(--accent); }
-    .flow-node.completed { border-left: 3px solid var(--success); }
-    .flow-node.failed { border-left: 3px solid var(--error); }
-
-    .flow-connector {
-      width: 2px;
-      height: 20px;
-      background: var(--border);
-      margin-left: 20px;
-    }
-
-    /* Animations */
-    .fade-in {
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CogneXus Dashboard</title>
+    <style>
+      :root {
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-tertiary: #21262d;
+        --border: #30363d;
+        --text-primary: #e6edf3;
+        --text-secondary: #8b949e;
+        --text-muted: #6e7681;
+        --accent: #58a6ff;
+        --accent-dim: #1f6feb;
+        --success: #3fb950;
+        --warning: #d29922;
+        --error: #f85149;
+        --purple: #a371f7;
       }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Header */
       .header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-title h1 {
+        font-size: 20px;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--accent), var(--purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .header-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--success);
+        animation: pulse 2s infinite;
+      }
+
+      .status-dot.warning {
+        background: var(--warning);
+      }
+      .status-dot.error {
+        background: var(--error);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Navigation */
+      .nav {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+      }
+
+      .nav-tab {
+        padding: 12px 16px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+      }
+
+      .nav-tab:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+      }
+
+      .nav-tab.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+
+      /* Main Content */
+      .main {
+        padding: 24px;
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      .section {
+        display: none;
+      }
+
+      .section.active {
+        display: block;
+      }
+
+      /* Cards */
+      .card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card-subtitle {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      /* Metrics Grid */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .metric-card {
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        padding: 16px;
+      }
+
+      .metric-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+      }
+
+      .metric-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .metric-unit {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--text-secondary);
+        margin-left: 4px;
+      }
+
+      .metric-trend {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        margin-top: 8px;
+      }
+
+      .metric-trend.up {
+        color: var(--success);
+      }
+      .metric-trend.down {
+        color: var(--error);
+      }
+      .metric-trend.neutral {
+        color: var(--text-muted);
+      }
+
+      /* Progress Bars */
+      .progress-container {
+        margin-bottom: 12px;
+      }
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      .progress-bar {
+        height: 8px;
+        background: var(--bg-primary);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+
+      .progress-fill.blue {
+        background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+      }
+      .progress-fill.green {
+        background: var(--success);
+      }
+      .progress-fill.yellow {
+        background: var(--warning);
+      }
+      .progress-fill.red {
+        background: var(--error);
+      }
+      .progress-fill.purple {
+        background: var(--purple);
+      }
+
+      /* Sparkline Chart */
+      .sparkline {
+        height: 40px;
+        margin-top: 8px;
+      }
+
+      .sparkline svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .sparkline-path {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 2;
+      }
+
+      .sparkline-area {
+        fill: url(#sparkline-gradient);
+        opacity: 0.3;
+      }
+
+      /* Tables */
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+
+      th {
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      tr:hover td {
+        background: var(--bg-tertiary);
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      .tag.success {
+        background: rgba(63, 185, 80, 0.15);
+        color: var(--success);
+      }
+      .tag.warning {
+        background: rgba(210, 153, 34, 0.15);
+        color: var(--warning);
+      }
+      .tag.error {
+        background: rgba(248, 81, 73, 0.15);
+        color: var(--error);
+      }
+      .tag.info {
+        background: rgba(88, 166, 255, 0.15);
+        color: var(--accent);
+      }
+
+      /* Heatmap */
+      .heatmap {
+        display: grid;
+        grid-template-columns: repeat(24, 1fr);
+        gap: 2px;
+        margin-top: 12px;
+      }
+
+      .heatmap-cell {
+        aspect-ratio: 1;
+        border-radius: 2px;
+        background: var(--bg-tertiary);
+      }
+
+      .heatmap-cell.level-1 {
+        background: rgba(63, 185, 80, 0.2);
+      }
+      .heatmap-cell.level-2 {
+        background: rgba(63, 185, 80, 0.4);
+      }
+      .heatmap-cell.level-3 {
+        background: rgba(63, 185, 80, 0.6);
+      }
+      .heatmap-cell.level-4 {
+        background: rgba(63, 185, 80, 0.8);
+      }
+      .heatmap-cell.level-5 {
+        background: var(--success);
+      }
+
+      /* Flow Diagram */
+      .flow-diagram {
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        padding: 20px;
+        min-height: 200px;
+        display: flex;
         flex-direction: column;
         gap: 12px;
       }
-    }
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header-title">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <circle cx="16" cy="16" r="14" stroke="url(#logo-gradient)" stroke-width="2"/>
-        <path d="M10 16C10 12 12 10 16 10C20 10 22 12 22 16C22 20 20 22 16 22C12 22 10 20 10 16Z" stroke="var(--accent)" stroke-width="2" fill="none"/>
-        <circle cx="16" cy="16" r="3" fill="var(--accent)"/>
-        <defs>
-          <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32">
-            <stop offset="0%" stop-color="#58a6ff"/>
-            <stop offset="100%" stop-color="#a371f7"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <h1>CogneXus Dashboard</h1>
-    </div>
-    <div class="header-status">
-      <div class="status-dot" id="statusDot"></div>
-      <span id="statusText">Connected</span>
-      <span style="color: var(--text-muted)">•</span>
-      <span id="lastUpdate">Last update: --</span>
-    </div>
-  </header>
 
-  <!-- Navigation -->
-  <nav class="nav">
-    <button class="nav-tab active" data-section="overview">Overview</button>
-    <button class="nav-tab" data-section="memory">Memory</button>
-    <button class="nav-tab" data-section="tasks">Tasks</button>
-    <button class="nav-tab" data-section="evolution">Evolution</button>
-    <button class="nav-tab" data-section="analytics">Analytics</button>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="main">
-    <!-- Overview Section -->
-    <section id="overview" class="section active">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Context Usage</div>
-          <div class="metric-value"><span id="contextUsage">0</span><span class="metric-unit">%</span></div>
-          <div class="progress-bar" style="margin-top: 8px;">
-            <div class="progress-fill blue" id="contextProgress" style="width: 0%"></div>
-          </div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Context Tokens</div>
-          <div class="metric-value"><span id="contextTokens">0</span></div>
-          <div class="metric-trend neutral" id="contextTrend">Calculating...</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Working Memory</div>
-          <div class="metric-value"><span id="workingSetSize">0</span><span class="metric-unit">chunks</span></div>
-          <div class="metric-trend neutral" id="workingSetTrend">Loading...</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Semantic Memory</div>
-          <div class="metric-value"><span id="semanticSize">0</span><span class="metric-unit">chunks</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Compactions</div>
-          <div class="metric-value"><span id="compactionCount">0</span></div>
-          <div class="metric-trend" id="compactionTrend">Session total</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Performance Score</div>
-          <div class="metric-value"><span id="performanceScore">--</span></div>
-          <div class="metric-trend neutral" id="performanceTrend">No data</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0z"/>
-              <path d="M8 3.5a.75.75 0 0 1 1.5 0v3.5H13a.75.75 0 0 1 0 1.5H9.5V13a.75.75 0 0 1-1.5 0V8.5H3a.75.75 0 0 1 0-1.5h3.5V3.5z"/>
-            </svg>
-            Real-Time Activity
-          </div>
-          <div class="card-subtitle">Last 60 minutes</div>
-        </div>
-        <div class="sparkline" id="activitySparkline">
-          <svg viewBox="0 0 200 40" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="sparkline-gradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3"/>
-                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <path class="sparkline-area" id="sparklineArea"></path>
-            <path class="sparkline-path" id="sparklinePath"></path>
-          </svg>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13zM1.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5h-13z"/>
-              <path d="M2 10h12v1H2zM2 12h12v1H2zM2 14h8v1H2z"/>
-            </svg>
-            Recent Sessions
-          </div>
-        </div>
-        <div class="table-container">
-          <table id="sessionsTable">
-            <thead>
-              <tr>
-                <th>Session</th>
-                <th>Started</th>
-                <th>Status</th>
-                <th>Turns</th>
-                <th>Context</th>
-              </tr>
-            </thead>
-            <tbody id="sessionsBody">
-              <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- Memory Section -->
-    <section id="memory" class="section">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Working Memory Chunks</div>
-          <div class="metric-value"><span id="wmChunks">0</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Episodic Entries</div>
-          <div class="metric-value"><span id="emEntries">0</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Semantic Chunks</div>
-          <div class="metric-value"><span id="smChunks">0</span></div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Avg Importance</div>
-          <div class="metric-value"><span id="avgImportance">0.00</span></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Importance Distribution</div>
-        </div>
-        <div class="heatmap" id="importanceHeatmap"></div>
-        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-muted);">
-          <span>Low (0.0)</span>
-          <span>0.2</span><span>0.4</span><span>0.6</span><span>0.8</span>
-          <span>High (1.0)</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Retrieval Latency</div>
-          <div class="card-subtitle">Last hour</div>
-        </div>
-        <div id="retrievalLatencyChart" style="height: 120px;"></div>
-      </div>
-    </section>
-
-    <!-- Tasks Section -->
-    <section id="tasks" class="section">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Active Tasks</div>
-          <div class="metric-value" id="activeTasks">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Pending Tasks</div>
-          <div class="metric-value" id="pendingTasks">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Completed (1h)</div>
-          <div class="metric-value" id="completedTasks">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Failed (1h)</div>
-          <div class="metric-value" style="color: var(--error);" id="failedTasks">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Avg Duration</div>
-          <div class="metric-value"><span id="avgTaskDuration">0</span><span class="metric-unit">ms</span></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Active Flow</div>
-        </div>
-        <div class="flow-diagram" id="flowDiagram">
-          <div style="color: var(--text-muted); text-align: center; padding: 40px;">No active flows</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Evolution Section -->
-    <section id="evolution" class="section">
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Changes Applied</div>
-          <div class="metric-value" id="evolutionChanges">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Pending Changes</div>
-          <div class="metric-value" id="pendingChanges">0</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Performance Trend</div>
-          <div class="metric-value" id="evolutionTrend">--</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Deliberations</div>
-          <div class="metric-value" id="deliberationCount">0</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Identity Changes Log</div>
-        </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>File</th>
-                <th>Change</th>
-                <th>Status</th>
-                <th>Verified</th>
-              </tr>
-            </thead>
-            <tbody id="changesBody">
-              <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No changes recorded</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Performance History</div>
-          <div class="card-subtitle">Last 7 days</div>
-        </div>
-        <div id="performanceChart" style="height: 200px;"></div>
-      </div>
-    </section>
-
-    <!-- Analytics Section -->
-    <section id="analytics" class="section">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Full Metrics Export</div>
-        </div>
-        <button id="exportBtn" style="background: var(--accent-dim); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;">
-          Export JSON
-        </button>
-        <pre id="metricsExport" style="background: var(--bg-primary); padding: 16px; border-radius: 6px; margin-top: 16px; overflow-x: auto; font-size: 12px; max-height: 400px;"></pre>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Raw Snapshots</div>
-        </div>
-        <div id="snapshotsList" style="font-size: 12px; font-family: monospace;"></div>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    // Configuration
-    const API_BASE = '/__openclaw__';
-    const REFRESH_INTERVAL = 5000;
-
-    // State
-    let currentSection = 'overview';
-    let snapshots = [];
-    let metricsHistory = { contextTokens: [], contextUsage: [] };
-
-    // DOM Elements
-    const sections = document.querySelectorAll('.section');
-    const navTabs = document.querySelectorAll('.nav-tab');
-
-    // Navigation
-    navTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const sectionId = tab.dataset.section;
-        switchSection(sectionId);
-      });
-    });
-
-    function switchSection(sectionId) {
-      currentSection = sectionId;
-      navTabs.forEach(t => t.classList.remove('active'));
-      document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
-      sections.forEach(s => s.classList.remove('active'));
-      document.getElementById(sectionId).classList.add('active');
-    }
-
-    // API Functions
-    async function fetchDashboard() {
-      try {
-        const response = await fetch(`${API_BASE}/analytics/dashboard`);
-        if (!response.ok) throw new Error('API unavailable');
-        return await response.json();
-      } catch (e) {
-        console.warn('Dashboard API not available:', e.message);
-        return null;
+      .flow-node {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 13px;
       }
-    }
 
-    async function fetchSnapshot() {
-      try {
-        const response = await fetch(`${API_BASE}/analytics/snapshot?sessionId=main`);
-        if (!response.ok) throw new Error('API unavailable');
-        return await response.json();
-      } catch (e) {
-        return null;
+      .flow-node.pending {
+        border-left: 3px solid var(--text-muted);
       }
-    }
-
-    async function fetchFlowStatus() {
-      try {
-        const response = await fetch(`${API_BASE}/flow/status?flowId=latest`);
-        if (!response.ok) return null;
-        const data = await response.json();
-        return data;
-      } catch (e) {
-        return null;
+      .flow-node.running {
+        border-left: 3px solid var(--accent);
       }
-    }
+      .flow-node.completed {
+        border-left: 3px solid var(--success);
+      }
+      .flow-node.failed {
+        border-left: 3px solid var(--error);
+      }
 
-    // Update Functions
-    function updateOverview(data) {
-      if (!data) return;
+      .flow-connector {
+        width: 2px;
+        height: 20px;
+        background: var(--border);
+        margin-left: 20px;
+      }
 
-      const { cognition, memory, evolution } = data;
+      /* Animations */
+      .fade-in {
+        animation: fadeIn 0.3s ease;
+      }
 
-      // Context
-      const usage = cognition?.contextUsagePercent ?? 0;
-      document.getElementById('contextUsage').textContent = Math.round(usage);
-      document.getElementById('contextProgress').style.width = `${Math.min(100, usage)}%`;
-      document.getElementById('contextTokens').textContent = (cognition?.contextTokens ?? 0).toLocaleString();
-      document.getElementById('compactionCount').textContent = cognition?.compactionCount ?? 0;
-
-      // Memory
-      document.getElementById('workingSetSize').textContent = memory?.workingSetSize ?? 0;
-      document.getElementById('semanticSize').textContent = memory?.semanticSize ?? 0;
-
-      // Evolution
-      const score = evolution?.performanceScore ?? 0.5;
-      document.getElementById('performanceScore').textContent = (score * 100).toFixed(0) + '%';
-      const trend = evolution?.trend ?? 'stable';
-      const trendEl = document.getElementById('performanceTrend');
-      trendEl.textContent = trend.charAt(0).toUpperCase() + trend.slice(1);
-      trendEl.className = `metric-trend ${trend === 'improving' ? 'up' : trend === 'declining' ? 'down' : 'neutral'}`;
-
-      // Update sparkline
-      metricsHistory.contextTokens.push(usage);
-      if (metricsHistory.contextTokens.length > 60) metricsHistory.contextTokens.shift();
-      updateSparkline();
-
-      // Status
-      document.getElementById('statusDot').className = 'status-dot';
-      document.getElementById('lastUpdate').textContent = `Last update: ${new Date().toLocaleTimeString()}`;
-    }
-
-    function updateSparkline() {
-      const data = metricsHistory.contextTokens;
-      if (data.length < 2) return;
-
-      const width = 200;
-      const height = 40;
-      const max = Math.max(...data, 1);
-      const min = Math.min(...data, 0);
-      const range = max - min || 1;
-
-      const points = data.map((v, i) => {
-        const x = (i / (data.length - 1)) * width;
-        const y = height - ((v - min) / range) * height;
-        return `${x},${y}`;
-      });
-
-      const pathD = 'M' + points.join(' L');
-      const areaD = pathD + ` L${width},${height} L0,${height} Z`;
-
-      document.getElementById('sparklinePath').setAttribute('d', pathD);
-      document.getElementById('sparklineArea').setAttribute('d', areaD);
-    }
-
-    function updateMemory(data) {
-      if (!data?.memory) return;
-
-      document.getElementById('wmChunks').textContent = data.memory.workingSetSize ?? 0;
-      document.getElementById('emEntries').textContent = data.memory.episodicSize ?? 0;
-      document.getElementById('smChunks').textContent = data.memory.semanticSize ?? 0;
-
-      const dist = data.memory.importanceDistribution ?? [];
-      const heatmap = document.getElementById('importanceHeatmap');
-      heatmap.innerHTML = '';
-
-      for (let i = 0; i < 24; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'heatmap-cell';
-        const value = dist[i] ?? 0;
-        if (value > 0) {
-          const level = Math.min(5, Math.ceil(value / 10));
-          cell.classList.add(`level-${level}`);
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
-        heatmap.appendChild(cell);
-      }
-    }
-
-    function updateTasks(data) {
-      if (!data?.tasks) return;
-
-      document.getElementById('activeTasks').textContent = data.tasks.active ?? 0;
-      document.getElementById('pendingTasks').textContent = data.tasks.pending ?? 0;
-      document.getElementById('completedTasks').textContent = data.tasks.completed ?? 0;
-      document.getElementById('failedTasks').textContent = data.tasks.failed ?? 0;
-      document.getElementById('avgTaskDuration').textContent = Math.round(data.tasks.avgDurationMs ?? 0);
-    }
-
-    function updateEvolution(data) {
-      if (!data?.evolution) return;
-
-      document.getElementById('evolutionChanges').textContent = data.evolution.changesApplied ?? 0;
-      document.getElementById('pendingChanges').textContent = data.evolution.pendingChanges ?? 0;
-      document.getElementById('evolutionTrend').textContent = (data.evolution.performanceScore ?? 0).toFixed(2);
-    }
-
-    async function updateAnalytics() {
-      try {
-        const response = await fetch(`${API_BASE}/analytics/metrics`);
-        if (!response.ok) throw new Error();
-        const metrics = await response.json();
-        document.getElementById('metricsExport').textContent = JSON.stringify(metrics, null, 2);
-      } catch (e) {
-        document.getElementById('metricsExport').textContent = 'API not available. Showing mock data.\n\n' + JSON.stringify(generateMockMetrics(), null, 2);
-      }
-    }
-
-    function generateMockMetrics() {
-      return {
-        cognition: {
-          context_tokens: { value: 45000, min: 42000, max: 52000, count: 60 },
-          context_usage_percent: { value: 21.9, min: 20.5, max: 25.3, count: 60 },
-          compaction_count: { value: 2, min: 0, max: 5, count: 3600 },
-        },
-        memory: {
-          working_set_size: { value: 23, min: 15, max: 35, count: 60 },
-          episodic_size: { value: 156, min: 140, max: 170, count: 60 },
-          semantic_size: { value: 2341, min: 2300, max: 2400, count: 60 },
-        },
-        tasks: {
-          tasks_active: { value: 2, min: 0, max: 8, count: 60 },
-          tasks_completed: { value: 47, min: 0, max: 89, count: 3600 },
-          tasks_failed: { value: 1, min: 0, max: 5, count: 3600 },
-        },
-        evolution: {
-          performance_score: { value: 0.73, min: 0.65, max: 0.82, count: 100 },
-        },
-        _note: 'Mock data - API not connected',
-      };
-    }
-
-    // Flow Status
-    async function updateFlow() {
-      const flow = await fetchFlowStatus();
-      const diagram = document.getElementById('flowDiagram');
-
-      if (!flow || !flow.tasks || flow.tasks.length === 0) {
-        diagram.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 40px;">No active flows</div>';
-        return;
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
-      diagram.innerHTML = flow.tasks.map(task => `
+      /* Responsive */
+      @media (max-width: 768px) {
+        .metrics-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .header {
+          flex-direction: column;
+          gap: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14" stroke="url(#logo-gradient)" stroke-width="2" />
+          <path
+            d="M10 16C10 12 12 10 16 10C20 10 22 12 22 16C22 20 20 22 16 22C12 22 10 20 10 16Z"
+            stroke="var(--accent)"
+            stroke-width="2"
+            fill="none"
+          />
+          <circle cx="16" cy="16" r="3" fill="var(--accent)" />
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32">
+              <stop offset="0%" stop-color="#58a6ff" />
+              <stop offset="100%" stop-color="#a371f7" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <h1>CogneXus Dashboard</h1>
+      </div>
+      <div class="header-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Connected</span>
+        <span style="color: var(--text-muted)">•</span>
+        <span id="lastUpdate">Last update: --</span>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <button class="nav-tab active" data-section="overview">Overview</button>
+      <button class="nav-tab" data-section="memory">Memory</button>
+      <button class="nav-tab" data-section="tasks">Tasks</button>
+      <button class="nav-tab" data-section="evolution">Evolution</button>
+      <button class="nav-tab" data-section="analytics">Analytics</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Overview Section -->
+      <section id="overview" class="section active">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Context Usage</div>
+            <div class="metric-value">
+              <span id="contextUsage">0</span><span class="metric-unit">%</span>
+            </div>
+            <div class="progress-bar" style="margin-top: 8px">
+              <div class="progress-fill blue" id="contextProgress" style="width: 0%"></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Context Tokens</div>
+            <div class="metric-value"><span id="contextTokens">0</span></div>
+            <div class="metric-trend neutral" id="contextTrend">Calculating...</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Working Memory</div>
+            <div class="metric-value">
+              <span id="workingSetSize">0</span><span class="metric-unit">chunks</span>
+            </div>
+            <div class="metric-trend neutral" id="workingSetTrend">Loading...</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Semantic Memory</div>
+            <div class="metric-value">
+              <span id="semanticSize">0</span><span class="metric-unit">chunks</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Compactions</div>
+            <div class="metric-value"><span id="compactionCount">0</span></div>
+            <div class="metric-trend" id="compactionTrend">Session total</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Performance Score</div>
+            <div class="metric-value"><span id="performanceScore">--</span></div>
+            <div class="metric-trend neutral" id="performanceTrend">No data</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0z"
+                />
+                <path
+                  d="M8 3.5a.75.75 0 0 1 1.5 0v3.5H13a.75.75 0 0 1 0 1.5H9.5V13a.75.75 0 0 1-1.5 0V8.5H3a.75.75 0 0 1 0-1.5h3.5V3.5z"
+                />
+              </svg>
+              Real-Time Activity
+            </div>
+            <div class="card-subtitle">Last 60 minutes</div>
+          </div>
+          <div class="sparkline" id="activitySparkline">
+            <svg viewBox="0 0 200 40" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="sparkline-gradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3" />
+                  <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path class="sparkline-area" id="sparklineArea"></path>
+              <path class="sparkline-path" id="sparklinePath"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13zM1.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5h-13z"
+                />
+                <path d="M2 10h12v1H2zM2 12h12v1H2zM2 14h8v1H2z" />
+              </svg>
+              Recent Sessions
+            </div>
+          </div>
+          <div class="table-container">
+            <table id="sessionsTable">
+              <thead>
+                <tr>
+                  <th>Session</th>
+                  <th>Started</th>
+                  <th>Status</th>
+                  <th>Turns</th>
+                  <th>Context</th>
+                </tr>
+              </thead>
+              <tbody id="sessionsBody">
+                <tr>
+                  <td colspan="5" style="text-align: center; color: var(--text-muted)">
+                    Loading...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Memory Section -->
+      <section id="memory" class="section">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Working Memory Chunks</div>
+            <div class="metric-value"><span id="wmChunks">0</span></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Episodic Entries</div>
+            <div class="metric-value"><span id="emEntries">0</span></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Semantic Chunks</div>
+            <div class="metric-value"><span id="smChunks">0</span></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Avg Importance</div>
+            <div class="metric-value"><span id="avgImportance">0.00</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Importance Distribution</div>
+          </div>
+          <div class="heatmap" id="importanceHeatmap"></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-top: 8px;
+              font-size: 11px;
+              color: var(--text-muted);
+            "
+          >
+            <span>Low (0.0)</span>
+            <span>0.2</span><span>0.4</span><span>0.6</span><span>0.8</span>
+            <span>High (1.0)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Retrieval Latency</div>
+            <div class="card-subtitle">Last hour</div>
+          </div>
+          <div id="retrievalLatencyChart" style="height: 120px"></div>
+        </div>
+      </section>
+
+      <!-- Tasks Section -->
+      <section id="tasks" class="section">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Active Tasks</div>
+            <div class="metric-value" id="activeTasks">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pending Tasks</div>
+            <div class="metric-value" id="pendingTasks">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Completed (1h)</div>
+            <div class="metric-value" id="completedTasks">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Failed (1h)</div>
+            <div class="metric-value" style="color: var(--error)" id="failedTasks">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Avg Duration</div>
+            <div class="metric-value">
+              <span id="avgTaskDuration">0</span><span class="metric-unit">ms</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Active Flow</div>
+          </div>
+          <div class="flow-diagram" id="flowDiagram">
+            <div style="color: var(--text-muted); text-align: center; padding: 40px">
+              No active flows
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Evolution Section -->
+      <section id="evolution" class="section">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Changes Applied</div>
+            <div class="metric-value" id="evolutionChanges">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pending Changes</div>
+            <div class="metric-value" id="pendingChanges">0</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Performance Trend</div>
+            <div class="metric-value" id="evolutionTrend">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Deliberations</div>
+            <div class="metric-value" id="deliberationCount">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Identity Changes Log</div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>File</th>
+                  <th>Change</th>
+                  <th>Status</th>
+                  <th>Verified</th>
+                </tr>
+              </thead>
+              <tbody id="changesBody">
+                <tr>
+                  <td colspan="5" style="text-align: center; color: var(--text-muted)">
+                    No changes recorded
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Performance History</div>
+            <div class="card-subtitle">Last 7 days</div>
+          </div>
+          <div id="performanceChart" style="height: 200px"></div>
+        </div>
+      </section>
+
+      <!-- Analytics Section -->
+      <section id="analytics" class="section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Full Metrics Export</div>
+          </div>
+          <button
+            id="exportBtn"
+            style="
+              background: var(--accent-dim);
+              color: white;
+              border: none;
+              padding: 8px 16px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 13px;
+            "
+          >
+            Export JSON
+          </button>
+          <pre
+            id="metricsExport"
+            style="
+              background: var(--bg-primary);
+              padding: 16px;
+              border-radius: 6px;
+              margin-top: 16px;
+              overflow-x: auto;
+              font-size: 12px;
+              max-height: 400px;
+            "
+          ></pre>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Raw Snapshots</div>
+          </div>
+          <div id="snapshotsList" style="font-size: 12px; font-family: monospace"></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Configuration
+      const API_BASE = "/__openclaw__";
+      const REFRESH_INTERVAL = 5000;
+
+      // State
+      let currentSection = "overview";
+      let snapshots = [];
+      let metricsHistory = { contextTokens: [], contextUsage: [] };
+
+      // DOM Elements
+      const sections = document.querySelectorAll(".section");
+      const navTabs = document.querySelectorAll(".nav-tab");
+
+      // Navigation
+      navTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const sectionId = tab.dataset.section;
+          switchSection(sectionId);
+        });
+      });
+
+      function switchSection(sectionId) {
+        currentSection = sectionId;
+        navTabs.forEach((t) => t.classList.remove("active"));
+        document.querySelector(`[data-section="${sectionId}"]`).classList.add("active");
+        sections.forEach((s) => s.classList.remove("active"));
+        document.getElementById(sectionId).classList.add("active");
+      }
+
+      // API Functions
+      async function fetchDashboard() {
+        try {
+          const response = await fetch(`${API_BASE}/analytics/dashboard`);
+          if (!response.ok) throw new Error("API unavailable");
+          return await response.json();
+        } catch (e) {
+          console.warn("Dashboard API not available:", e.message);
+          return null;
+        }
+      }
+
+      async function fetchSnapshot() {
+        try {
+          const response = await fetch(`${API_BASE}/analytics/snapshot?sessionId=main`);
+          if (!response.ok) throw new Error("API unavailable");
+          return await response.json();
+        } catch (e) {
+          return null;
+        }
+      }
+
+      async function fetchFlowStatus() {
+        try {
+          const response = await fetch(`${API_BASE}/flow/status?flowId=latest`);
+          if (!response.ok) return null;
+          const data = await response.json();
+          return data;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      // Update Functions
+      function updateOverview(data) {
+        if (!data) return;
+
+        const { cognition, memory, evolution } = data;
+
+        // Context
+        const usage = cognition?.contextUsagePercent ?? 0;
+        document.getElementById("contextUsage").textContent = Math.round(usage);
+        document.getElementById("contextProgress").style.width = `${Math.min(100, usage)}%`;
+        document.getElementById("contextTokens").textContent = (
+          cognition?.contextTokens ?? 0
+        ).toLocaleString();
+        document.getElementById("compactionCount").textContent = cognition?.compactionCount ?? 0;
+
+        // Memory
+        document.getElementById("workingSetSize").textContent = memory?.workingSetSize ?? 0;
+        document.getElementById("semanticSize").textContent = memory?.semanticSize ?? 0;
+
+        // Evolution
+        const score = evolution?.performanceScore ?? 0.5;
+        document.getElementById("performanceScore").textContent = (score * 100).toFixed(0) + "%";
+        const trend = evolution?.trend ?? "stable";
+        const trendEl = document.getElementById("performanceTrend");
+        trendEl.textContent = trend.charAt(0).toUpperCase() + trend.slice(1);
+        trendEl.className = `metric-trend ${trend === "improving" ? "up" : trend === "declining" ? "down" : "neutral"}`;
+
+        // Update sparkline
+        metricsHistory.contextTokens.push(usage);
+        if (metricsHistory.contextTokens.length > 60) metricsHistory.contextTokens.shift();
+        updateSparkline();
+
+        // Status
+        document.getElementById("statusDot").className = "status-dot";
+        document.getElementById("lastUpdate").textContent =
+          `Last update: ${new Date().toLocaleTimeString()}`;
+      }
+
+      function updateSparkline() {
+        const data = metricsHistory.contextTokens;
+        if (data.length < 2) return;
+
+        const width = 200;
+        const height = 40;
+        const max = Math.max(...data, 1);
+        const min = Math.min(...data, 0);
+        const range = max - min || 1;
+
+        const points = data.map((v, i) => {
+          const x = (i / (data.length - 1)) * width;
+          const y = height - ((v - min) / range) * height;
+          return `${x},${y}`;
+        });
+
+        const pathD = "M" + points.join(" L");
+        const areaD = pathD + ` L${width},${height} L0,${height} Z`;
+
+        document.getElementById("sparklinePath").setAttribute("d", pathD);
+        document.getElementById("sparklineArea").setAttribute("d", areaD);
+      }
+
+      function updateMemory(data) {
+        if (!data?.memory) return;
+
+        document.getElementById("wmChunks").textContent = data.memory.workingSetSize ?? 0;
+        document.getElementById("emEntries").textContent = data.memory.episodicSize ?? 0;
+        document.getElementById("smChunks").textContent = data.memory.semanticSize ?? 0;
+
+        const dist = data.memory.importanceDistribution ?? [];
+        const heatmap = document.getElementById("importanceHeatmap");
+        heatmap.innerHTML = "";
+
+        for (let i = 0; i < 24; i++) {
+          const cell = document.createElement("div");
+          cell.className = "heatmap-cell";
+          const value = dist[i] ?? 0;
+          if (value > 0) {
+            const level = Math.min(5, Math.ceil(value / 10));
+            cell.classList.add(`level-${level}`);
+          }
+          heatmap.appendChild(cell);
+        }
+      }
+
+      function updateTasks(data) {
+        if (!data?.tasks) return;
+
+        document.getElementById("activeTasks").textContent = data.tasks.active ?? 0;
+        document.getElementById("pendingTasks").textContent = data.tasks.pending ?? 0;
+        document.getElementById("completedTasks").textContent = data.tasks.completed ?? 0;
+        document.getElementById("failedTasks").textContent = data.tasks.failed ?? 0;
+        document.getElementById("avgTaskDuration").textContent = Math.round(
+          data.tasks.avgDurationMs ?? 0,
+        );
+      }
+
+      function updateEvolution(data) {
+        if (!data?.evolution) return;
+
+        document.getElementById("evolutionChanges").textContent =
+          data.evolution.changesApplied ?? 0;
+        document.getElementById("pendingChanges").textContent = data.evolution.pendingChanges ?? 0;
+        document.getElementById("evolutionTrend").textContent = (
+          data.evolution.performanceScore ?? 0
+        ).toFixed(2);
+      }
+
+      async function updateAnalytics() {
+        try {
+          const response = await fetch(`${API_BASE}/analytics/metrics`);
+          if (!response.ok) throw new Error();
+          const metrics = await response.json();
+          document.getElementById("metricsExport").textContent = JSON.stringify(metrics, null, 2);
+        } catch (e) {
+          document.getElementById("metricsExport").textContent =
+            "API not available. Showing mock data.\n\n" +
+            JSON.stringify(generateMockMetrics(), null, 2);
+        }
+      }
+
+      function generateMockMetrics() {
+        return {
+          cognition: {
+            context_tokens: { value: 45000, min: 42000, max: 52000, count: 60 },
+            context_usage_percent: { value: 21.9, min: 20.5, max: 25.3, count: 60 },
+            compaction_count: { value: 2, min: 0, max: 5, count: 3600 },
+          },
+          memory: {
+            working_set_size: { value: 23, min: 15, max: 35, count: 60 },
+            episodic_size: { value: 156, min: 140, max: 170, count: 60 },
+            semantic_size: { value: 2341, min: 2300, max: 2400, count: 60 },
+          },
+          tasks: {
+            tasks_active: { value: 2, min: 0, max: 8, count: 60 },
+            tasks_completed: { value: 47, min: 0, max: 89, count: 3600 },
+            tasks_failed: { value: 1, min: 0, max: 5, count: 3600 },
+          },
+          evolution: {
+            performance_score: { value: 0.73, min: 0.65, max: 0.82, count: 100 },
+          },
+          _note: "Mock data - API not connected",
+        };
+      }
+
+      // Flow Status
+      async function updateFlow() {
+        const flow = await fetchFlowStatus();
+        const diagram = document.getElementById("flowDiagram");
+
+        if (!flow || !flow.tasks || flow.tasks.length === 0) {
+          diagram.innerHTML =
+            '<div style="color: var(--text-muted); text-align: center; padding: 40px;">No active flows</div>';
+          return;
+        }
+
+        diagram.innerHTML = flow.tasks
+          .map(
+            (task) => `
         <div class="flow-node ${task.status}">
           <span>${task.id}</span>
-          <span class="tag ${task.status === 'completed' ? 'success' : task.status === 'running' ? 'info' : task.status === 'failed' ? 'error' : 'warning'}">${task.status}</span>
-          ${task.durationMs ? `<span style="margin-left: auto; color: var(--text-muted);">${task.durationMs}ms</span>` : ''}
+          <span class="tag ${task.status === "completed" ? "success" : task.status === "running" ? "info" : task.status === "failed" ? "error" : "warning"}">${task.status}</span>
+          ${task.durationMs ? `<span style="margin-left: auto; color: var(--text-muted);">${task.durationMs}ms</span>` : ""}
         </div>
-      `).join('');
-    }
+      `,
+          )
+          .join("");
+      }
 
-    // Main Loop
-    async function refresh() {
-      const data = await fetchDashboard();
-      updateOverview(data);
-      updateMemory(data);
-      updateTasks(data);
-      updateEvolution(data);
-    }
+      // Main Loop
+      async function refresh() {
+        const data = await fetchDashboard();
+        updateOverview(data);
+        updateMemory(data);
+        updateTasks(data);
+        updateEvolution(data);
+      }
 
-    // Export
-    document.getElementById('exportBtn')?.addEventListener('click', () => {
-      const data = document.getElementById('metricsExport').textContent;
-      const blob = new Blob([data], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `cognexus-metrics-${Date.now()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+      // Export
+      document.getElementById("exportBtn")?.addEventListener("click", () => {
+        const data = document.getElementById("metricsExport").textContent;
+        const blob = new Blob([data], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `cognexus-metrics-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
 
-    // Initialize
-    refresh();
-    updateAnalytics();
-    updateFlow();
+      // Initialize
+      refresh();
+      updateAnalytics();
+      updateFlow();
 
-    setInterval(refresh, REFRESH_INTERVAL);
-    setInterval(updateAnalytics, 30000);
-    setInterval(updateFlow, 10000);
+      setInterval(refresh, REFRESH_INTERVAL);
+      setInterval(updateAnalytics, 30000);
+      setInterval(updateFlow, 10000);
 
-    // Add sessions mock data
-    document.getElementById('sessionsBody').innerHTML = `
+      // Add sessions mock data
+      document.getElementById("sessionsBody").innerHTML = `
       <tr>
         <td>agent:main:telegram:direct</td>
         <td>${new Date(Date.now() - 3600000).toLocaleTimeString()}</td>
@@ -929,9 +1065,9 @@
       </tr>
     `;
 
-    // Initialize sparkline with mock data
-    metricsHistory.contextTokens = Array.from({ length: 30 }, () => Math.random() * 30 + 10);
-    updateSparkline();
-  </script>
-</body>
+      // Initialize sparkline with mock data
+      metricsHistory.contextTokens = Array.from({ length: 30 }, () => Math.random() * 30 + 10);
+      updateSparkline();
+    </script>
+  </body>
 </html>

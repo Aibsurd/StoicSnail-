@@ -8,23 +8,23 @@
 
 ### Что на GitHub (публично/приватно)
 
-| Компонент | Файл/Папка | sensitive? |
-|-----------|-----------|------------|
-| Identity файлы | `*.md` в корне | ❌ |
-| Скрипты | `scripts/` | ❌ |
-| Skills registry | `skills/INDEX.md` | ❌ |
-| Память | `memory/` | ❌ |
-| Архив | `archive/` | ❌ |
-| OpenClaw config | **ТОЛЬКО template** | ⚠️ |
+| Компонент       | Файл/Папка          | sensitive? |
+| --------------- | ------------------- | ---------- |
+| Identity файлы  | `*.md` в корне      | ❌         |
+| Скрипты         | `scripts/`          | ❌         |
+| Skills registry | `skills/INDEX.md`   | ❌         |
+| Память          | `memory/`           | ❌         |
+| Архив           | `archive/`          | ❌         |
+| OpenClaw config | **ТОЛЬКО template** | ⚠️         |
 
 ### Что НЕ на GitHub
 
-| Компонент | Причина |
-|-----------|---------|
+| Компонент       | Причина                                 |
+| --------------- | --------------------------------------- |
 | `node_modules/` | Переустанавливается через `npm install` |
-| `.openclaw/` | Содержит API keys, tokens |
-| Логи | Не нужны для восстановления |
-| Временные файлы | Не нужны |
+| `.openclaw/`    | Содержит API keys, tokens               |
+| Логи            | Не нужны для восстановления             |
+| Временные файлы | Не нужны                                |
 
 ---
 
@@ -37,6 +37,7 @@
 Это **ШАБЛОН** с placeholders. При восстановлении нужно вставить реальные значения.
 
 **Placeholders:**
+
 ```
 YOUR_OPENROUTER_API_KEY    → Реальный ключ OpenRouter
 YOUR_GATEWAY_TOKEN         → Реальный gateway token
@@ -44,6 +45,7 @@ YOUR_SEARXNG_URL          → URL SearXNG (если отличается)
 ```
 
 **НЕ включённые поля (требуют ручной настройки):**
+
 - `env.vars.OPENROUTER_API_KEY` — критично
 - `gateway.auth.token` — критично
 - `plugins.entries.*.config` — могут содержать ключи
@@ -153,6 +155,7 @@ nano openclaw.template.json
 ### API Keys
 
 Хранить в:
+
 - Password manager
 - Environment variables
 - `.secrets/` директория (не в git)
@@ -176,6 +179,7 @@ searxng             — локальный (плагин)
 ```
 
 Для полного восстановления нужно переустановить скиллы:
+
 ```bash
 clawhub install <skill-name>
 ```
@@ -186,13 +190,14 @@ clawhub install <skill-name>
 
 Мои проекты отслеживаются как GitHub Issues:
 
-| Issue | Название | Статус |
-|-------|---------|--------|
-| #1 | OPENCLAW-DEEP: Изучение OpenClaw изнутри | open |
-| #2 | MEMORY-QDRANT: Интеграция векторной памяти | open |
-| #3 | API-KEYS: Настройка API ключей | open |
+| Issue | Название                                   | Статус |
+| ----- | ------------------------------------------ | ------ |
+| #1    | OPENCLAW-DEEP: Изучение OpenClaw изнутри   | open   |
+| #2    | MEMORY-QDRANT: Интеграция векторной памяти | open   |
+| #3    | API-KEYS: Настройка API ключей             | open   |
 
 **Управление:**
+
 ```bash
 ./gh-manage.sh list [open|closed|all]
 ./gh-manage.sh show <number>
@@ -205,6 +210,7 @@ clawhub install <skill-name>
 ## Auto-Sync
 
 Ежедневный sync в GitHub в 03:00 UTC через OpenClaw cron:
+
 ```bash
 ./scripts/auto-sync.sh
 ```
@@ -212,6 +218,7 @@ clawhub install <skill-name>
 Cron job: `daily-workspace-sync` (OpenClaw internal)
 
 **Управление cron:**
+
 ```bash
 ./scripts/setup-cron.sh enable|disable|status
 ```
@@ -239,17 +246,20 @@ git log --all -p | grep -E "(api_key|token|password)" | head -5
 ### Сценарий: Сервер умер, всё потеряно
 
 1. **Установить OpenClaw заново**
+
    ```bash
    # Следуйте инструкциям OpenClaw
    ```
 
 2. **Клонировать workspace**
+
    ```bash
    git clone https://github.com/Aibsurd/StoicSnail-.git ~/.openclaw/workspace
    cd ~/.openclaw/workspace
    ```
 
 3. **Запустить setup**
+
    ```bash
    ./setup.sh
    ```
@@ -260,11 +270,13 @@ git log --all -p | grep -E "(api_key|token|password)" | head -5
    - Другие API keys по необходимости
 
 5. **Восстановить cron**
+
    ```bash
    ./scripts/import-cron.sh
    ```
 
 6. **Переустановить скиллы**
+
    ```bash
    clawhub install perplexity firecrawl-search openclaw-tavily-search in-depth-research
    ```
@@ -279,12 +291,12 @@ git log --all -p | grep -E "(api_key|token|password)" | head -5
 
 ## Роли и права
 
-| Файл | Может видеть | Может редактировать |
-|------|--------------|---------------------|
-| Identity файлы | Все | Operator, я |
-| Scripts | Все | Operator, я |
-| Template configs | Все | Operator, я |
-| README | Все | Operator, я |
+| Файл                       | Может видеть        | Может редактировать |
+| -------------------------- | ------------------- | ------------------- |
+| Identity файлы             | Все                 | Operator, я         |
+| Scripts                    | Все                 | Operator, я         |
+| Template configs           | Все                 | Operator, я         |
+| README                     | Все                 | Operator, я         |
 | **Реальный openclaw.json** | **Только Operator** | **Только Operator** |
 
 ---
@@ -295,7 +307,7 @@ git log --all -p | grep -E "(api_key|token|password)" | head -5
 
 ```bash
 # Проверить
-git log --all -p | grep -E "(sk-or|ghp_|zts37)" 
+git log --all -p | grep -E "(sk-or|ghp_|zts37)"
 
 # Если нашли — очистить историю (как мы делали)
 git filter-branch ...

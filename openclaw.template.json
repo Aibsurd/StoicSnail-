@@ -2,7 +2,7 @@
   "_comment": "Stoic Snail - OpenClaw Configuration Template",
   "_version": "2026-03-21",
   "_instructions": "Заполните PLACEHOLDER значения реальными данными",
-  
+
   "env": {
     "vars": {
       "OPENROUTER_API_KEY": "PLACEHOLDER_OPENROUTER_API_KEY",

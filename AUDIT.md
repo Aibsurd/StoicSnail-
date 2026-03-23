@@ -7,18 +7,18 @@
 
 ## ✅ Протестировано и работает
 
-| Компонент | Статус | Заметки |
-|-----------|--------|---------|
-| Файловые операции | ✅ | read/write/edit/exec |
-| Web search (SearXNG) | ✅ | Работает |
-| Web fetch | ✅ | Readability |
-| memory-qdrant | ✅ | Векторная память |
-| Sub-agents | ✅ | Протестировано 3 задачи |
-| Cron/scheduling | ✅ | daily-workspace-sync active |
-| GitHub push/sync | ✅ | Работает |
-| GitHub Issues (gh-manage.sh) | ✅ | 3 issues создано |
-| Compaction config | ✅ | Настроен safeguard mode |
-| Context management | ✅ | 60% currently |
+| Компонент                    | Статус | Заметки                     |
+| ---------------------------- | ------ | --------------------------- |
+| Файловые операции            | ✅     | read/write/edit/exec        |
+| Web search (SearXNG)         | ✅     | Работает                    |
+| Web fetch                    | ✅     | Readability                 |
+| memory-qdrant                | ✅     | Векторная память            |
+| Sub-agents                   | ✅     | Протестировано 3 задачи     |
+| Cron/scheduling              | ✅     | daily-workspace-sync active |
+| GitHub push/sync             | ✅     | Работает                    |
+| GitHub Issues (gh-manage.sh) | ✅     | 3 issues создано            |
+| Compaction config            | ✅     | Настроен safeguard mode     |
+| Context management           | ✅     | 60% currently               |
 
 ---
 
@@ -31,6 +31,7 @@
 **Статус:** Known issue, work in progress
 
 **Что нужно:**
+
 - [ ] Исправить парсинг JSON
 - [ ] Добавить fallback на direct URL fetch
 - [ ] Протестировать на реальных запросах
@@ -52,6 +53,7 @@
 **Проблема:** Я написал свой `gh-manage.sh` вместо использования скилла
 
 **Что лучше в скилле:**
+
 - Автоматический fork workflow
 - Sub-agents для parallel fix
 - PR review monitoring
@@ -68,6 +70,7 @@
 **Проблема:** Никогда не использовался
 
 **Когда использовать:**
+
 - Operator спрашивает о предыдущих разговорах
 - Потеря контекста между сессиями
 - Анализ истории
@@ -123,6 +126,7 @@
 **Скилл:** `/app/skills/node-connect/SKILL.md`
 
 **Что потеряно без nodes:**
+
 - Canvas display
 - Camera access
 - Screen recording
@@ -133,14 +137,14 @@
 
 ## 📋 Skills — не использованные
 
-| Skill | Путь | Потенциал |
-|--------|------|-----------|
-| `session-logs` | `/app/skills/session-logs/` | Анализ истории |
-| `gh-issues` | `/app/skills/gh-issues/` | Автоматизация GitHub |
-| `canvas` | `/app/skills/canvas/` | UI для nodes |
-| `summarize` | `/app/skills/summarize/` | TL;DR контента |
-| `sag` (TTS) | `/app/skills/sag/` | Voice output |
-| `model-usage` | `/app/skills/model-usage/` | Мониторинг модели |
+| Skill          | Путь                        | Потенциал            |
+| -------------- | --------------------------- | -------------------- |
+| `session-logs` | `/app/skills/session-logs/` | Анализ истории       |
+| `gh-issues`    | `/app/skills/gh-issues/`    | Автоматизация GitHub |
+| `canvas`       | `/app/skills/canvas/`       | UI для nodes         |
+| `summarize`    | `/app/skills/summarize/`    | TL;DR контента       |
+| `sag` (TTS)    | `/app/skills/sag/`          | Voice output         |
+| `model-usage`  | `/app/skills/model-usage/`  | Мониторинг модели    |
 
 ---
 
@@ -151,6 +155,7 @@
 **Сейчас:** Только `daily-workspace-sync`
 
 **Можно добавить:**
+
 - Еженедельный self-review
 - Мониторинг здоровья системы
 - Автоматические backup checks
@@ -162,6 +167,7 @@
 **Сейчас:** Используем по умолчанию
 
 **Не использовано:**
+
 - `/new` для чистого контекста
 - `/compact` для очистки
 - `/session idle` controls
@@ -173,6 +179,7 @@
 **Сейчас:** Один агент
 
 **Возможность:**
+
 - Отдельный agent для research
 - Отдельный agent для coding
 - Разные модели для разных задач
@@ -203,14 +210,14 @@
 
 ## 📊 Метрики аудита
 
-| Metric | Value |
-|--------|-------|
-| Skills доступно | 60+ |
-| Skills использовано | ~7 |
-| Scripts создано | 9 |
-| Scripts протестировано | 4 |
-| GitHub features | 2 (issues, sync) |
-| Config patches | 2 (compaction, subagents) |
+| Metric                 | Value                     |
+| ---------------------- | ------------------------- |
+| Skills доступно        | 60+                       |
+| Skills использовано    | ~7                        |
+| Scripts создано        | 9                         |
+| Scripts протестировано | 4                         |
+| GitHub features        | 2 (issues, sync)          |
+| Config patches         | 2 (compaction, subagents) |
 
 ---
 

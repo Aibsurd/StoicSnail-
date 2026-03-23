@@ -2,42 +2,42 @@
 /**
  * Stoic Snail API Server
  * Expose tools and data via HTTP API
- * 
+ *
  * Run: ./server.mjs [port]
  * Default port: 3737
  */
 
-import { createServer } from 'http';
-import { readFileSync } from 'fs';
-import { join, dirname, extname } from 'path';
-import { fileURLToPath } from 'url';
-import Database from 'better-sqlite3';
+import { readFileSync } from "fs";
+import { createServer } from "http";
+import { join, dirname, extname } from "path";
+import { fileURLToPath } from "url";
+import Database from "better-sqlite3";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.argv[2]) || 3737;
-const WORKSPACE = join(__dirname, '..', '..');
-const DB_PATH = join(WORKSPACE, 'data', 'snail.db');
-const SCRATCH_PATH = join(WORKSPACE, 'data', 'scratch.json');
+const WORKSPACE = join(__dirname, "..", "..");
+const DB_PATH = join(WORKSPACE, "data", "snail.db");
+const SCRATCH_PATH = join(WORKSPACE, "data", "scratch.json");
 
 // Initialize database
 let db;
 try {
   db = new Database(DB_PATH);
-  db.pragma('journal_mode = WAL');
+  db.pragma("journal_mode = WAL");
 } catch (e) {
-  console.log('Database not initialized');
+  console.log("Database not initialized");
 }
 
 // MIME types
 const MIME = {
-  '.html': 'text/html',
-  '.css': 'text/css',
-  '.js': 'application/javascript',
-  '.json': 'application/json',
-  '.txt': 'text/plain',
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.ico': 'image/x-icon'
+  ".html": "text/html",
+  ".css": "text/css",
+  ".js": "application/javascript",
+  ".json": "application/json",
+  ".txt": "text/plain",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".ico": "image/x-icon",
 };
 
 // Parse URL and query params
@@ -46,78 +46,78 @@ function parseUrl(req) {
   return {
     path: url.pathname,
     query: Object.fromEntries(url.searchParams),
-    method: req.method
+    method: req.method,
   };
 }
 
 // Response helpers
 function json(res, data, status = 200, headersOnly = false) {
   if (!headersOnly) {
-    res.writeHead(status, { 'Content-Type': 'application/json' });
+    res.writeHead(status, { "Content-Type": "application/json" });
     res.end(JSON.stringify(data));
   }
 }
 
 function text(res, data, status = 200, headersOnly = false) {
   if (!headersOnly) {
-    res.writeHead(status, { 'Content-Type': 'text/plain' });
+    res.writeHead(status, { "Content-Type": "text/plain" });
     res.end(data);
   }
 }
 
 function html(res, data, status = 200, headersOnly = false) {
   if (!headersOnly) {
-    res.writeHead(status, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.writeHead(status, { "Content-Type": "text/html; charset=utf-8" });
     res.end(data);
   }
 }
 
 // API Routes
 async function handleApi(req, res, { path, query }) {
-  const parts = path.split('/').filter(Boolean);
+  const parts = path.split("/").filter(Boolean);
   const resource = parts[1]; // /api/:resource
-  
+
   // Pre-flight - just send headers
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     });
     res.end();
     return;
   }
-  
+
   try {
     switch (`${req.method} /${resource}`) {
       // Memory / Key-Value store
-      case 'GET /memory':
-      case 'GET /keys': {
-        const rows = db.prepare('SELECT * FROM memory ORDER BY updated_at DESC LIMIT 100').all();
+      case "GET /memory":
+      case "GET /keys": {
+        const rows = db.prepare("SELECT * FROM memory ORDER BY updated_at DESC LIMIT 100").all();
         json(res, rows);
         break;
       }
-      
-      case 'GET /memory/:key': {
+
+      case "GET /memory/:key": {
         const key = parts[2];
-        const row = db.prepare('SELECT * FROM memory WHERE key = ?').get(key);
+        const row = db.prepare("SELECT * FROM memory WHERE key = ?").get(key);
         if (!row) {
-          json(res, { error: 'Not found' }, 404);
+          json(res, { error: "Not found" }, 404);
         } else {
           json(res, row);
         }
         break;
       }
-      
-      case 'POST /memory': {
+
+      case "POST /memory": {
         let body = await getBody(req);
         const { key, value, type } = body;
         if (!key || value === undefined) {
-          json(res, { error: 'key and value required' }, 400);
+          json(res, { error: "key and value required" }, 400);
           break;
         }
-        const finalType = type || (typeof value === 'object' ? 'json' : 'text');
-        const finalValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+        const finalType = type || (typeof value === "object" ? "json" : "text");
+        const finalValue = typeof value === "object" ? JSON.stringify(value) : String(value);
         db.prepare(`
           INSERT INTO memory (key, value, type, updated_at)
           VALUES (?, ?, ?, CURRENT_TIMESTAMP)
@@ -126,97 +126,97 @@ async function handleApi(req, res, { path, query }) {
         json(res, { ok: true, key });
         break;
       }
-      
-      case 'DELETE /memory/:key': {
+
+      case "DELETE /memory/:key": {
         const key = parts[2];
-        db.prepare('DELETE FROM memory WHERE key = ?').run(key);
+        db.prepare("DELETE FROM memory WHERE key = ?").run(key);
         json(res, { ok: true });
         break;
       }
-      
+
       // Scratch notes
-      case 'GET /notes': {
-        const scratch = JSON.parse(readFileSync(SCRATCH_PATH, 'utf-8'));
+      case "GET /notes": {
+        const scratch = JSON.parse(readFileSync(SCRATCH_PATH, "utf-8"));
         json(res, scratch.notes);
         break;
       }
-      
-      case 'POST /notes': {
+
+      case "POST /notes": {
         let body = await getBody(req);
         const { text } = body;
         if (!text) {
-          json(res, { error: 'text required' }, 400);
+          json(res, { error: "text required" }, 400);
           break;
         }
-        const scratch = JSON.parse(readFileSync(SCRATCH_PATH, 'utf-8'));
+        const scratch = JSON.parse(readFileSync(SCRATCH_PATH, "utf-8"));
         const note = {
-          id: (scratch.notes.length > 0 ? Math.max(...scratch.notes.map(n => n.id)) : 0) + 1,
+          id: (scratch.notes.length > 0 ? Math.max(...scratch.notes.map((n) => n.id)) : 0) + 1,
           text,
           tags: [],
           created: new Date().toISOString(),
           updated: new Date().toISOString(),
-          last: true
+          last: true,
         };
-        scratch.notes.forEach(n => n.last = false);
+        scratch.notes.forEach((n) => (n.last = false));
         scratch.notes.push(note);
         scratch.last = note.id;
-        require('fs').writeFileSync(SCRATCH_PATH, JSON.stringify(scratch, null, 2));
+        require("fs").writeFileSync(SCRATCH_PATH, JSON.stringify(scratch, null, 2));
         json(res, { ok: true, id: note.id });
         break;
       }
-      
-      case 'DELETE /notes/:id': {
+
+      case "DELETE /notes/:id": {
         const id = parseInt(parts[2]);
-        const scratch = JSON.parse(readFileSync(SCRATCH_PATH, 'utf-8'));
+        const scratch = JSON.parse(readFileSync(SCRATCH_PATH, "utf-8"));
         const before = scratch.notes.length;
-        scratch.notes = scratch.notes.filter(n => n.id !== id);
+        scratch.notes = scratch.notes.filter((n) => n.id !== id);
         if (scratch.notes.length < before) {
           scratch.last = scratch.notes[scratch.notes.length - 1]?.id || null;
-          require('fs').writeFileSync(SCRATCH_PATH, JSON.stringify(scratch, null, 2));
+          require("fs").writeFileSync(SCRATCH_PATH, JSON.stringify(scratch, null, 2));
         }
         json(res, { ok: true });
         break;
       }
-      
+
       // Projects
-      case 'GET /projects': {
-        const rows = db.prepare('SELECT * FROM projects ORDER BY updated_at DESC').all();
+      case "GET /projects": {
+        const rows = db.prepare("SELECT * FROM projects ORDER BY updated_at DESC").all();
         json(res, rows);
         break;
       }
-      
-      case 'GET /project/:id': {
+
+      case "GET /project/:id": {
         const id = parseInt(parts[2]);
-        const row = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
-        json(res, row || { error: 'Not found' });
+        const row = db.prepare("SELECT * FROM projects WHERE id = ?").get(id);
+        json(res, row || { error: "Not found" });
         break;
       }
-      
+
       // Status / Health
-      case 'GET /status':
-      case 'GET /health': {
-        const memRows = db.prepare('SELECT COUNT(*) as count FROM memory').get();
-        const noteCount = JSON.parse(readFileSync(SCRATCH_PATH, 'utf-8')).notes.length;
+      case "GET /status":
+      case "GET /health": {
+        const memRows = db.prepare("SELECT COUNT(*) as count FROM memory").get();
+        const noteCount = JSON.parse(readFileSync(SCRATCH_PATH, "utf-8")).notes.length;
         json(res, {
-          status: 'ok',
+          status: "ok",
           uptime: process.uptime(),
           memory: memRows.count,
           notes: noteCount,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
       }
-      
+
       // Query endpoint
-      case 'POST /query': {
+      case "POST /query": {
         let body = await getBody(req);
         const { sql } = body;
         if (!sql) {
-          json(res, { error: 'sql required' }, 400);
+          json(res, { error: "sql required" }, 400);
           break;
         }
         const stmt = db.prepare(sql);
-        const isSelect = sql.trim().toLowerCase().startsWith('select');
+        const isSelect = sql.trim().toLowerCase().startsWith("select");
         if (isSelect) {
           const rows = stmt.all();
           json(res, { rows, count: rows.length });
@@ -226,9 +226,9 @@ async function handleApi(req, res, { path, query }) {
         }
         break;
       }
-      
+
       default:
-        json(res, { error: 'Not found' }, 404);
+        json(res, { error: "Not found" }, 404);
     }
   } catch (err) {
     json(res, { error: err.message }, 500);
@@ -237,50 +237,50 @@ async function handleApi(req, res, { path, query }) {
 
 function getBody(req) {
   return new Promise((resolve, reject) => {
-    let body = '';
-    req.on('data', chunk => body += chunk);
-    req.on('end', () => {
+    let body = "";
+    req.on("data", (chunk) => (body += chunk));
+    req.on("end", () => {
       try {
         resolve(body ? JSON.parse(body) : {});
       } catch {
         resolve({});
       }
     });
-    req.on('error', reject);
+    req.on("error", reject);
   });
 }
 
 // Static file server for dashboard
 function handleStatic(req, res, { path }) {
   // Serve index.html for root
-  if (path === '/') {
-    path = '/index.html';
+  if (path === "/") {
+    path = "/index.html";
   }
-  
-  const filePath = join(__dirname, 'public', path);
-  
+
+  const filePath = join(__dirname, "public", path);
+
   try {
     const ext = extname(filePath);
     const content = readFileSync(filePath);
-    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+    res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream" });
     res.end(content);
   } catch {
     res.writeHead(404);
-    res.end('Not found');
+    res.end("Not found");
   }
 }
 
 // Main server
 const server = createServer((req, res) => {
   const parsed = parseUrl(req);
-  
-  if (parsed.path.startsWith('/api/')) {
+
+  if (parsed.path.startsWith("/api/")) {
     handleApi(req, res, parsed);
-  } else if (parsed.path.startsWith('/public/') || parsed.path === '/') {
+  } else if (parsed.path.startsWith("/public/") || parsed.path === "/") {
     handleStatic(req, res, parsed);
   } else {
     res.writeHead(404);
-    res.end('Not found');
+    res.end("Not found");
   }
 });
 
@@ -316,8 +316,8 @@ Examples:
 `);
 });
 
-process.on('SIGINT', () => {
-  console.log('\nShutting down...');
+process.on("SIGINT", () => {
+  console.log("\nShutting down...");
   if (db) db.close();
   server.close();
   process.exit(0);

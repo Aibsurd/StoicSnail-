@@ -11,6 +11,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ## Инструменты
 
 ### HTTP Client — `fetch.mjs` v2
+
 ```bash
 ./snail fetch https://httpbin.org/get -j
 ./snail fetch https://httpbin.org/post -X POST -d '{"key":"value"}' -j
@@ -18,6 +19,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### Web Scraper — `scrape.mjs` v2
+
 ```bash
 ./snail scrape /path/to/file.html h1
 ./snail scrape https://example.com a href
@@ -26,6 +28,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### Code Analyzer — `analyze.mjs` v2
+
 ```bash
 ./snail analyze tree
 ./snail analyze tree src 5
@@ -35,6 +38,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### Diff — `diff.mjs` v2
+
 ```bash
 ./snail diff file1.js file2.js
 ./snail diff -s file1.js file2.js
@@ -44,6 +48,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### Data Pipeline — `pipe.mjs`
+
 ```bash
 ./snail pipe @json:'{"key":"value"}' .key
 ./snail pipe @json:'[1,2,3,4,5]' .sum
@@ -52,6 +57,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### SQLite Database — `db.mjs`
+
 ```bash
 ./snail db query "SELECT * FROM memory LIMIT 10"
 ./snail db set user.prefs '{"theme":"dark"}'
@@ -62,6 +68,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### Scratch Pad — `scratch.mjs`
+
 ```bash
 ./snail scratch add "Quick note"
 ./snail scratch list
@@ -73,6 +80,7 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### Session Intelligence — `si.mjs`
+
 ```bash
 ./snail si start "my-project"
 ./snail si decisions "Chose X because Y"
@@ -86,12 +94,15 @@ PhD-level engineering environment для автономной работы. v2.1
 ```
 
 ### Interactive REPL — `repl.mjs`
+
 ```bash
 ./snail repl
 ```
+
 Доступные: `store`, `ws`, `json`, `str`, `math`, `date`, `fetch`
 
 ### API Server — `server.mjs` (фоновый)
+
 ```bash
 ./snail server 3737
 # Endpoints:
